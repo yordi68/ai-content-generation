@@ -8,7 +8,7 @@ import urllib.error
 import urllib.request
 import wave
 
-from runlog import log_run
+from runlog import log_run, requests_today
 from validate import ROOT, STORYBOARD_PATH, load_storyboard, validate
 
 ENV_PATH = ROOT / ".env"
@@ -16,6 +16,10 @@ OUT_DIR = ROOT / "outputs" / "narration"
 TAIL_PAUSE_S = 0.5
 MAX_ATTEMPTS = 3
 TIMEOUT_S = 180
+MIN_GAP_S = 20
+MINUTE_RETRY_WAIT_S = 25
+DAILY_LIMIT = 10
+LAST_CALL = {"at": 0.0}
 
 
 class QuotaExhausted(Exception):
@@ -37,6 +41,13 @@ def cache_key(shot, voice):
         "style": voice["style"],
     }
     return hashlib.sha256(json.dumps(payload, sort_keys=True).encode("utf-8")).hexdigest()
+
+
+def pace():
+    wait = MIN_GAP_S - (time.monotonic() - LAST_CALL["at"])
+    if wait > 0:
+        time.sleep(wait)
+    LAST_CALL["at"] = time.monotonic()
 
 
 def synthesize(api_key, model, voice, narration):
@@ -80,7 +91,11 @@ def wav_seconds(path):
 
 def fetch_audio(shot, voice, api_key, name, models):
     for model in models:
+        if requests_today(model) >= DAILY_LIMIT:
+            print(f"{name}: {model} has used its {DAILY_LIMIT} requests for today, skipping")
+            continue
         for attempt in range(1, MAX_ATTEMPTS + 1):
+            pace()
             start = time.monotonic()
             try:
                 mime, audio = synthesize(api_key, model, voice, shot["narration"])
@@ -96,8 +111,14 @@ def fetch_audio(shot, voice, api_key, name, models):
                     "status": "error", "error": detail,
                 })
                 if getattr(exc, "code", None) == 429:
-                    print(f"{name}: quota reached on {model}, trying the next model")
-                    break
+                    if "per day" in detail.lower():
+                        print(f"{name}: {model} is out for today, trying the next model")
+                        break
+                    if attempt == MAX_ATTEMPTS:
+                        break
+                    print(f"{name}: per-minute limit on {model}, waiting {MINUTE_RETRY_WAIT_S}s")
+                    time.sleep(MINUTE_RETRY_WAIT_S)
+                    continue
                 if attempt == MAX_ATTEMPTS:
                     raise
                 print(f"{name}: attempt {attempt} on {model} failed, retrying")
@@ -151,7 +172,7 @@ def generate(shot, voice, api_key, state):
     try:
         model, attempt, latency, audio = fetch_audio(shot, voice, api_key, name, voice["models"])
     except QuotaExhausted:
-        raise SystemExit(f"{name}: every model hit its quota; re-run later, finished shots are cached")
+        raise SystemExit(f"{name}: every model is out for today; run again tomorrow, finished shots are cached")
     return store(shot, voice, name, key, model, attempt, latency, audio)
 
 
@@ -170,7 +191,7 @@ def main():
 
     for shot in board["shots"]:
         seconds = generate(shot, voice, api_key, state)
-        shot["duration_s"] = round(seconds + TAIL_PAUSE_S, 1)
+        shot["duration_s"] = round(seconds / voice["tempo"] + TAIL_PAUSE_S, 1)
 
     errors = validate(board)
     if errors:
