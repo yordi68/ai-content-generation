@@ -6,7 +6,7 @@ Early-career developers who are worried about AI. They are juniors or recent gra
 
 Where they watch: mostly on a phone, in vertical (9:16) format, on social platforms. The horizontal (16:9) cut is for larger screens.
 
-Language: the narration is in Amharic, with English subtitles.
+Language: the narration is in English, voiced by Gemini TTS (voice Kore, calm and warm). English subtitles are burned into the picture.
 
 ## Intent
 
@@ -71,6 +71,7 @@ What changed: TBD.
 | Audience | Early-career developers worried about AI | The story speaks directly to them |
 | Intent | Hopeful: they can still build with AI | The draft ends on learning to build with it |
 | Pipeline on screen | Only the end card, and the post | Keeps the film a story; the repo carries the craft |
-| Narration language | Amharic, English subtitles | Your choice; the story is yours |
+| Narration language | English, burned-in English subtitles | Your later choice; the audience reads and hears the same words |
+| Narrator voice | Gemini TTS, Kore, calm and warm | Suits a reflective first-person story |
 | Characters | One invented developer, no real face | No consent record needed |
 | Shots | 12 | Your choice, fits 60–90 seconds |
