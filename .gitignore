@@ -1,0 +1,18 @@
+# Brief kept local, not part of the repository
+AI-Content Generation.md
+
+# Secrets: never commit real keys
+.env
+
+# Generated media: regenerate with make film
+outputs/*
+!outputs/.gitkeep
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# OS
+.DS_Store
