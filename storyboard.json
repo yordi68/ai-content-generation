@@ -1,13 +1,20 @@
 {
   "title": "A New Life for a Software Engineer",
-  "aspect_ratios": ["9:16", "16:9"],
+  "aspect_ratios": [
+    "9:16",
+    "16:9"
+  ],
   "style_block": "warm, soft natural light, a hand-painted feel, muted earth tones, grainy film texture",
   "character": "a young Ethiopian woman software developer in her early twenties, shoulder-length black hair, plain grey sweater, at a wooden desk with a laptop",
   "voice": {
     "provider": "gemini",
-    "model": "gemini-3.8-flash-tts",
+    "models": [
+      "gemini-3.8-flash-tts",
+      "gemini-2.5-flash-preview-tts",
+      "gemini-2.5-pro-preview-tts"
+    ],
     "voice_name": "Kore",
-    "style": "calm, warm, unhurried"
+    "style": "calm, warm, a little brisker"
   },
   "music": [],
   "shots": [
@@ -15,8 +22,11 @@
       "id": 1,
       "narration": "In 2022, AI arrived.",
       "picture": "She sits at a wooden desk at dawn, a closed laptop in front of her, soft light from a window.",
-      "motion": { "type": "push-in", "amount": "slow" },
-      "duration_s": null,
+      "motion": {
+        "type": "push-in",
+        "amount": "slow"
+      },
+      "duration_s": 6.9,
       "seed": 1,
       "reason": "Sets the time and place, her home office in Addis Ababa."
     },
@@ -24,8 +34,11 @@
       "id": 2,
       "narration": "I was sure it could never be as good as a developer like me, so I brushed it off.",
       "picture": "She looks at a glowing laptop screen, uncertain.",
-      "motion": { "type": "pan-right", "amount": "slow" },
-      "duration_s": null,
+      "motion": {
+        "type": "pan-right",
+        "amount": "slow"
+      },
+      "duration_s": 8.6,
       "seed": 2,
       "reason": "Shows her first doubt."
     },
@@ -33,8 +46,11 @@
       "id": 3,
       "narration": "I didn't think it would get this far.",
       "picture": "She closes the laptop with a small shrug.",
-      "motion": { "type": "pull-out", "amount": "slow" },
-      "duration_s": null,
+      "motion": {
+        "type": "pull-out",
+        "amount": "slow"
+      },
+      "duration_s": 7.0,
       "seed": 3,
       "reason": "Shows her dismissing AI, which sets up the later regret."
     },
@@ -42,8 +58,11 @@
       "id": 4,
       "narration": "But the models kept getting stronger, and then the layoffs started.",
       "picture": "Abstract glowing screens with rising lines.",
-      "motion": { "type": "push-in", "amount": "slow" },
-      "duration_s": null,
+      "motion": {
+        "type": "push-in",
+        "amount": "slow"
+      },
+      "duration_s": 8.1,
       "seed": 4,
       "reason": "Shows the pace of change without a face."
     },
@@ -51,8 +70,11 @@
       "id": 5,
       "narration": "Companies cut teams one after another, and the fear crept closer to my own desk.",
       "picture": "An empty office chair pushed back from a desk.",
-      "motion": { "type": "pan-left", "amount": "slow" },
-      "duration_s": null,
+      "motion": {
+        "type": "pan-left",
+        "amount": "slow"
+      },
+      "duration_s": 10.1,
       "seed": 5,
       "reason": "Puts the layoffs into one image."
     },
@@ -60,8 +82,11 @@
       "id": 6,
       "narration": "I began to question my own ability.",
       "picture": "Her hands hover over a keyboard, not touching it.",
-      "motion": { "type": "push-in", "amount": "slow" },
-      "duration_s": null,
+      "motion": {
+        "type": "push-in",
+        "amount": "slow"
+      },
+      "duration_s": 3.7,
       "seed": 6,
       "reason": "Makes the fear personal through her hands."
     },
@@ -69,8 +94,11 @@
       "id": 7,
       "narration": "Writing code slowly became writing prompts,",
       "picture": "A glowing prompt box where lines of code used to be.",
-      "motion": { "type": "pan-right", "amount": "slow" },
-      "duration_s": null,
+      "motion": {
+        "type": "pan-right",
+        "amount": "slow"
+      },
+      "duration_s": 4.0,
       "seed": 7,
       "reason": "Shows coding turning into prompting."
     },
@@ -78,8 +106,11 @@
       "id": 8,
       "narration": "and the skills I'd spent years building began slipping away from me.",
       "picture": "A code editor fades to a dim screen.",
-      "motion": { "type": "pull-out", "amount": "slow" },
-      "duration_s": null,
+      "motion": {
+        "type": "pull-out",
+        "amount": "slow"
+      },
+      "duration_s": 5.5,
       "seed": 8,
       "reason": "Shows her skills fading."
     },
@@ -87,8 +118,11 @@
       "id": 9,
       "narration": "So I stopped watching, and I started building again, this time with AI.",
       "picture": "She opens a notebook and starts sketching.",
-      "motion": { "type": "push-in", "amount": "slow" },
-      "duration_s": null,
+      "motion": {
+        "type": "push-in",
+        "amount": "slow"
+      },
+      "duration_s": 5.7,
       "seed": 9,
       "reason": "Marks the turn toward building."
     },
@@ -96,8 +130,11 @@
       "id": 10,
       "narration": "Maybe the future of software isn't about competing with it.",
       "picture": "She looks up from her screen, calm and steady.",
-      "motion": { "type": "pan-left", "amount": "slow" },
-      "duration_s": null,
+      "motion": {
+        "type": "pan-left",
+        "amount": "slow"
+      },
+      "duration_s": 5.0,
       "seed": 10,
       "reason": "Gives a calm moment before the hope."
     },
@@ -105,8 +142,11 @@
       "id": 11,
       "narration": "Maybe it's about learning to build with it.",
       "picture": "She builds something on her laptop in warm evening light.",
-      "motion": { "type": "push-in", "amount": "slow" },
-      "duration_s": null,
+      "motion": {
+        "type": "push-in",
+        "amount": "slow"
+      },
+      "duration_s": 6.2,
       "seed": 11,
       "reason": "Shows the hopeful outcome in action."
     },
@@ -114,8 +154,11 @@
       "id": 12,
       "narration": "The world is changing. And so can we.",
       "picture": "A plain warm background, no picture.",
-      "motion": { "type": "none", "amount": "none" },
-      "duration_s": null,
+      "motion": {
+        "type": "none",
+        "amount": "none"
+      },
+      "duration_s": 3.8,
       "seed": 12,
       "reason": "The end card. The text and 'Made with AI' are added in code, since AI-generated text tends to come out garbled."
     }
