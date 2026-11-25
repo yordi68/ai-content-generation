@@ -21,7 +21,7 @@
   "shots": [
     {
       "id": 1,
-      "narration": "In 2022, AI arrived.",
+      "narration": "In 2022, AI arrived, quietly at first.",
       "picture": "She sits at a wooden desk at dawn, a closed laptop in front of her, soft light from a window.",
       "motion": {
         "type": "push-in",
@@ -45,7 +45,7 @@
     },
     {
       "id": 3,
-      "narration": "I didn't think it would get this far.",
+      "narration": "I didn't think it would get this far, and honestly, I didn't want it to.",
       "picture": "She closes the laptop with a small shrug.",
       "motion": {
         "type": "pull-out",
@@ -81,7 +81,7 @@
     },
     {
       "id": 6,
-      "narration": "I began to question my own ability.",
+      "narration": "I began to question my own ability, late at night, wondering if I still belonged.",
       "picture": "Her hands hover over a keyboard, not touching it.",
       "motion": {
         "type": "push-in",
@@ -117,7 +117,7 @@
     },
     {
       "id": 9,
-      "narration": "So I stopped watching, and I started building again, this time with AI.",
+      "narration": "So I stopped watching, and I started building again, this time with AI by my side.",
       "picture": "She opens a notebook and starts sketching.",
       "motion": {
         "type": "push-in",
