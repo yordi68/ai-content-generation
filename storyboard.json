@@ -1,167 +1,187 @@
 {
-  "title": "A New Life for a Software Engineer",
+  "title": "Abigiya and the Little Star",
   "aspect_ratios": [
     "9:16",
     "16:9"
   ],
-  "style_block": "warm, soft natural light, a hand-painted feel, muted earth tones, grainy film texture",
-  "character": "a young Ethiopian woman software developer in her early twenties, shoulder-length black hair, plain grey sweater, at a wooden desk with a laptop",
+  "style_block": "soft hand-painted storybook illustration, warm gentle light, pastel colours, painterly texture",
+  "character": "a young Ethiopian girl about 8 years old, dark hair in braids, a simple colourful dress; an older Ethiopian grandmother with grey hair and a white shawl",
   "voice": {
-    "provider": "gemini",
+    "provider": "edge-tts",
     "models": [
+      "am-ET-MekdesNeural",
       "gemini-3.8-flash-tts",
-      "gemini-2.5-flash-preview-tts",
-      "gemini-2.5-pro-preview-tts"
+      "gemini-3.8-flash-lite-tts",
+      "gemini-2.5-flash-preview-tts"
     ],
-    "voice_name": "Kore",
-    "style": "calm, warm, a little brisker",
-    "tempo": 1.08
+    "voice_name": "am-ET-MekdesNeural",
+    "style": "calm, warm, natural Ethiopian Amharic storyteller",
+    "tempo": 1.0
   },
-  "music": [],
+  "music": [
+    {
+      "id": "cue_01_lullaby",
+      "start_shot": 1,
+      "end_shot": 12,
+      "caption": "gentle warm Ethiopian krar and soft ambient pad lullaby, peaceful bedtime story underscore, slow tempo, instrumental, no vocals, soft dynamics leaving space for voice narration"
+    }
+  ],
   "shots": [
     {
       "id": 1,
-      "narration": "In 2022, AI arrived.",
-      "picture": "She sits at a wooden desk at dawn, a closed laptop in front of her, soft light from a window.",
+      "narration": "በድሮ ዘመን፣ አቢጊያ የተባለች ትንሽ ልጅ በኢትዮጵያ ውብ መንደር ትኖር ነበር።",
+      "subtitle": "Once upon a time, a little girl named Abigiya lived in a beautiful village in Ethiopia.",
+      "picture": "The village at dusk, small houses and hills in soft light.",
       "motion": {
         "type": "push-in",
         "amount": "slow"
       },
-      "duration_s": 6.4,
+      "duration_s": 5.3,
       "seed": 1,
-      "reason": "Sets the time and place, her home office in Addis Ababa."
+      "reason": "Sets the place."
     },
     {
       "id": 2,
-      "narration": "I was sure it could never be as good as a developer like me, so I brushed it off.",
-      "picture": "She looks at a glowing laptop screen, uncertain.",
+      "narration": "በየምሽቱ በመስኮት አጠገብ ተቀምጣ የጨለማውን ሰማይ ከዋክብት ትመለከት ነበር።",
+      "subtitle": "Every night, she sat by the window and watched the stars in the dark sky.",
+      "picture": "Abigiya sits by her bedroom window, looking up at the night sky.",
       "motion": {
         "type": "pan-right",
         "amount": "slow"
       },
-      "duration_s": 8.0,
+      "duration_s": 5.6,
       "seed": 2,
-      "reason": "Shows her first doubt."
+      "reason": "Shows her nightly habit."
     },
     {
       "id": 3,
-      "narration": "I didn't think it would get this far.",
-      "picture": "She closes the laptop with a small shrug.",
-      "motion": {
-        "type": "pull-out",
-        "amount": "slow"
-      },
-      "duration_s": 6.5,
-      "seed": 3,
-      "reason": "Shows her dismissing AI, which sets up the later regret."
-    },
-    {
-      "id": 4,
-      "narration": "But the models kept getting stronger, and then the layoffs started.",
-      "picture": "Abstract glowing screens with rising lines.",
+      "narration": "አንድ ምሽት፣ ከሁሉም ይበልጥ ደምቃ የምትታይ አንዲት ትንሽ ኮከብ አየች።",
+      "subtitle": "One night, she saw a small star shining brighter than all the others.",
+      "picture": "One star shining brighter than the rest over the hills.",
       "motion": {
         "type": "push-in",
         "amount": "slow"
       },
-      "duration_s": 7.6,
+      "duration_s": 5.2,
+      "seed": 3,
+      "reason": "Introduces the special star."
+    },
+    {
+      "id": 4,
+      "narration": "ፈገግ ብላም በዝግታ፣ «እኔም ልክ እንዳንቺ ማብራት በቻልኩ» አለች።",
+      "subtitle": "She smiled and softly said, \"I wish I could shine like you.\"",
+      "picture": "Abigiya smiles and speaks softly toward the star.",
+      "motion": {
+        "type": "push-in",
+        "amount": "slow"
+      },
+      "duration_s": 4.8,
       "seed": 4,
-      "reason": "Shows the pace of change without a face."
+      "reason": "Shows her wish."
     },
     {
       "id": 5,
-      "narration": "Companies cut teams one after another, and the fear crept closer to my own desk.",
-      "picture": "An empty office chair pushed back from a desk.",
+      "narration": "አጠገቧ የነበረችው አያቷ ሰምታት፣ «የኔ ውድ፣ ለምን ኮከብ መሆን ፈለግሽ?» ስትል ጠየቀቻት።",
+      "subtitle": "Her grandmother, sitting nearby, heard her and asked gently, \"My dear, why did you want to be a star?\"",
+      "picture": "Her grandmother sits nearby, looking at her with a gentle question.",
       "motion": {
         "type": "pan-left",
         "amount": "slow"
       },
-      "duration_s": 9.4,
+      "duration_s": 6.4,
       "seed": 5,
-      "reason": "Puts the layoffs into one image."
+      "reason": "Brings in the grandmother."
     },
     {
       "id": 6,
-      "narration": "I began to question my own ability.",
-      "picture": "Her hands hover over a keyboard, not touching it.",
+      "narration": "አቢጊያም፣ «ከዋክብት ጨለማን ያበራሉ። ዓለምን የተሻለች ማድረግ እፈልጋለሁ» አለች።",
+      "subtitle": "Abigiya replied, \"Stars bring light to the darkness. I want to make the world a better place.\"",
+      "picture": "Abigiya answers, hands clasped, determined.",
       "motion": {
         "type": "push-in",
         "amount": "slow"
       },
-      "duration_s": 6.3,
+      "duration_s": 5.7,
       "seed": 6,
-      "reason": "Makes the fear personal through her hands."
+      "reason": "Shows her reason."
     },
     {
       "id": 7,
-      "narration": "Writing code slowly became writing prompts,",
-      "picture": "A glowing prompt box where lines of code used to be.",
+      "narration": "አያቷ እጇን ይዘው ፈገግ አሉ።",
+      "subtitle": "Her grandmother smiled and took her hand.",
+      "picture": "Grandmother smiles and holds Abigiya's hand.",
+      "motion": {
+        "type": "pull-out",
+        "amount": "slow"
+      },
+      "duration_s": 3.2,
+      "seed": 7,
+      "reason": "Shows their bond."
+    },
+    {
+      "id": 8,
+      "narration": "«አቢጊያ፣ ብርሃን ለማምጣት ኮከብ መሆን አያስፈልግሽም። ሰው ስትረጂ፣ ደግነት ስታካፍሊ ወይም ብቸኛ ለሆነ ተስፋ ስትሰጪ ልክ እንደዚያች ኮከብ ታበሪያለሽ» አሏት።",
+      "subtitle": "\"Abigiya, you don't need to be a star to bring light. Every time you help someone, share kindness, or give hope to someone who is lonely, you shine just like that star.\"",
+      "picture": "Grandmother speaks, warm light around her, then a child helps an elderly neighbour through a doorway.",
+      "motion": {
+        "type": "push-in",
+        "amount": "slow"
+      },
+      "duration_s": 9.6,
+      "seed": 8,
+      "reason": "The main lesson of the story."
+    },
+    {
+      "id": 9,
+      "narration": "አቢጊያ ወደ ሰማይ አሻቅባ ተመለከተች።",
+      "subtitle": "Abigiya looked up at the sky again.",
+      "picture": "Abigiya looks up at the sky once more.",
+      "motion": {
+        "type": "pan-left",
+        "amount": "slow"
+      },
+      "duration_s": 3.7,
+      "seed": 9,
+      "reason": "A calm return to the stars."
+    },
+    {
+      "id": 10,
+      "narration": "ትንሽ ብርሃን እንኳን ለውጥ እንደሚያመጣ ተረዳች።",
+      "subtitle": "She understood that even a small light can make a difference.",
+      "picture": "Abigiya holds a small light, calm and understanding.",
+      "motion": {
+        "type": "push-in",
+        "amount": "slow"
+      },
+      "duration_s": 4.1,
+      "seed": 10,
+      "reason": "Shows her new understanding."
+    },
+    {
+      "id": 11,
+      "narration": "ከዚያ ምሽት ጀምሮ በሰዎች ሕይወት ትንሽ ብርሃን ለማምጣት ጣረች።",
+      "subtitle": "From that night on, she tried to bring a little light into people's lives.",
+      "picture": "Abigiya helps villagers in small ways, with lanterns and water.",
       "motion": {
         "type": "pan-right",
         "amount": "slow"
       },
-      "duration_s": 7.8,
-      "seed": 7,
-      "reason": "Shows coding turning into prompting."
-    },
-    {
-      "id": 8,
-      "narration": "and the skills I'd spent years building began slipping away from me.",
-      "picture": "A code editor fades to a dim screen.",
-      "motion": {
-        "type": "pull-out",
-        "amount": "slow"
-      },
-      "duration_s": 7.5,
-      "seed": 8,
-      "reason": "Shows her skills fading."
-    },
-    {
-      "id": 9,
-      "narration": "So I stopped watching, and I started building again, this time with AI.",
-      "picture": "She opens a notebook and starts sketching.",
-      "motion": {
-        "type": "push-in",
-        "amount": "slow"
-      },
-      "duration_s": 9.1,
-      "seed": 9,
-      "reason": "Marks the turn toward building."
-    },
-    {
-      "id": 10,
-      "narration": "Maybe the future of software isn't about competing with it.",
-      "picture": "She looks up from her screen, calm and steady.",
-      "motion": {
-        "type": "pan-left",
-        "amount": "slow"
-      },
-      "duration_s": 8.8,
-      "seed": 10,
-      "reason": "Gives a calm moment before the hope."
-    },
-    {
-      "id": 11,
-      "narration": "Maybe it's about learning to build with it.",
-      "picture": "She builds something on her laptop in warm evening light.",
-      "motion": {
-        "type": "push-in",
-        "amount": "slow"
-      },
-      "duration_s": 5.8,
+      "duration_s": 5.0,
       "seed": 11,
-      "reason": "Shows the hopeful outcome in action."
+      "reason": "Shows her changed life."
     },
     {
       "id": 12,
-      "narration": "The world is changing. And so can we.",
-      "picture": "A plain warm background, no picture.",
+      "narration": "አያቷም ይህን አይተው «ኮኮቤ» ብለው ሰየሟት።",
+      "subtitle": "Her grandmother saw this and named her \"Kokobe.\"",
+      "picture": "Grandmother and Abigiya under the stars, the end card with 'Made with AI' added in code.",
       "motion": {
         "type": "none",
         "amount": "none"
       },
-      "duration_s": 7.0,
+      "duration_s": 3.8,
       "seed": 12,
-      "reason": "The end card. The text and 'Made with AI' are added in code, since AI-generated text tends to come out garbled."
+      "reason": "The closing image. The end card text is added in code, since AI-generated text tends to come out garbled."
     }
   ]
 }
