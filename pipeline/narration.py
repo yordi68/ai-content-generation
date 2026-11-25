@@ -25,6 +25,7 @@ TIMEOUT_S = 180
 MIN_GAP_S = 20
 MINUTE_RETRY_WAIT_S = 25
 DAILY_LIMIT = 10
+CODE_VERSION = "narration-v2"
 LAST_CALL = {"at": 0.0}
 KEY_ID = {"value": ""}
 
@@ -44,6 +45,7 @@ def load_api_key():
 
 def cache_key(shot, voice):
     payload = {
+        "code_version": CODE_VERSION,
         "narration": shot["narration"],
         "model": voice["models"][0],
         "voice": voice["voice_name"],
@@ -164,13 +166,22 @@ def store(shot, voice, name, key, provider, model, attempt, latency, audio):
     wav_path.write_bytes(audio)
     seconds = wav_seconds(wav_path)
     meta_path.write_text(
-        json.dumps({"cache_key": key, "seconds": seconds, "model": model, "provider": provider}, indent=2),
+        json.dumps(
+            {
+                "cache_key": key,
+                "code_version": CODE_VERSION,
+                "seconds": round(seconds, 4),
+                "model": model,
+                "provider": provider,
+            },
+            indent=2,
+        ),
         encoding="utf-8",
     )
     log_run({
         "stage": "narration", "provider": provider, "model": model, "key_id": KEY_ID["value"],
         "shot": shot["id"], "attempt": attempt,
-        "params": {"voice": voice["voice_name"], "style": voice["style"], "seed": None},
+        "params": {"voice": voice["voice_name"], "prompt_mode": "raw_text", "text_chars": len(shot["narration"])},
         "latency_s": round(latency, 2), "status": "ok",
         "output": {"file": f"outputs/narration/{name}.wav", "seconds": round(seconds, 2)},
         "cost": {"free_tier": True, "list_price_usd": 0.0},
@@ -188,7 +199,7 @@ def generate(shot, voice, api_key, state):
 
     if (OUT_DIR / f"{name}.wav").exists() and meta_path.exists():
         meta = json.loads(meta_path.read_text(encoding="utf-8"))
-        if meta["cache_key"] == key:
+        if meta.get("cache_key") == key:
             if meta["model"] == primary or not state["upgrade"]:
                 print(f"{name}: cached ({meta['seconds']:.2f}s, {meta['model']})")
                 return meta["seconds"]

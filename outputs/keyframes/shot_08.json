@@ -1,0 +1,9 @@
+{
+  "cache_key": "f372fc2c544c6d2d6df664655f633174dd30d4ac12c0822af676528e67776f09",
+  "code_version": "keyframes-v2",
+  "model": "@cf/black-forest-labs/flux-1-schnell",
+  "seed": 8,
+  "steps": 4,
+  "prompt": "soft hand-painted storybook illustration, warm gentle light, pastel colours, painterly texture. Characters in frame: an older Ethiopian grandmother with grey hair and a warm expression wearing a traditional white cotton netela shawl; Abigiya, an 8-year-old Ethiopian girl with dark hair in two neat braids wearing a warm yellow-and-teal dress. Scene: The grandmother speaks tenderly to Abigiya beside a glowing lantern while pointing gently toward the warm village outside. Centered subject composition, balanced framing for both 9:16 vertical and 16:9 horizontal crops, pure illustration without any text, letters, numbers, or signatures.",
+  "bytes": 621443
+}

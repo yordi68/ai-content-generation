@@ -1,0 +1,12 @@
+{
+  "cache_key": "44cf8a3fd28e8287a7e1f5f65f59b92b830e86dd6df4324109bdc9c138b6429e",
+  "code_version": "shots-v2",
+  "shot_id": 11,
+  "aspect": "16:9",
+  "duration_s": 5.0,
+  "motion": {
+    "type": "pan-right",
+    "amount": "slow"
+  },
+  "method": "ffmpeg-zoompan-pan-right"
+}

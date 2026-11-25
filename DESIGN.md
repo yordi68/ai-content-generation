@@ -4,13 +4,13 @@
 
 Title: **Abigiya and the Little Star** (`ኮኮቤ`)
 
-A 65.0-second short film for families and children, exported in both vertical (`9:16`, 720×1280) and horizontal (`16:9`, 1280×720) aspect ratios.
+A **65.0-second** short film (`62.4s` across 12 shots + `2.6s` AI disclosure end card) for Ethiopian families and children, exported in both vertical (`9:16`, 720×1280) and horizontal (`16:9`, 1280×720) aspect ratios.
 
 ## Audience
 
-Ethiopian families, children, and young people watching with their relatives or on mobile feeds. The story is told gently in Amharic, the way a grandmother tells a bedtime story, with burned-in English subtitles so younger diaspora viewers and international audiences can follow every line.
+Ethiopian families, children, and diaspora relatives watching together at bedtime or on mobile feeds. The story is narrated in Amharic—the way an Ethiopian grandmother tells an evening story—with burned-in English subtitles so younger diaspora children and non-Amharic speakers can follow every beat.
 
-Where they watch: primarily on a phone in vertical (`9:16`) format on social platforms and messaging groups, and on a laptop or television in horizontal (`16:9`) format.
+Where they watch: primarily on a phone in vertical (`9:16`) format on family messaging groups and social feeds, and on a laptop or television in horizontal (`16:9`) format.
 
 ## Intent
 
@@ -20,70 +20,55 @@ The viewer should understand this in one sentence: **you do not need to be a sta
 
 ---
 
-## Why Every Shot Exists (Shot-by-Shot Intent)
+## Why Every Shot Exists (Matches `reason` in `storyboard.json`)
 
-| Shot | Duration | Visual & Camera Motion | Narrative & Emotional Reason |
-|---|---|---|---|
-| **1** | `5.3s` | Ethiopian village at dusk, small houses and hills in soft light (`push-in`) | Establishes the time, place, and warm storybook mood in Ethiopia. |
-| **2** | `5.6s` | Abigiya sits by her bedroom window looking up at the night sky (`pan-right`) | Introduces Abigiya and her nightly habit of wonder and curiosity. |
-| **3** | `5.2s` | One small star shining brighter than all the others over the hills (`push-in`) | Introduces the visual motif of the single small bright star (`ኮኮቡኣ`). |
-| **4** | `4.8s` | Abigiya smiles and speaks softly toward the star (`push-in`) | Captures her quiet wish: *"I wish I could shine like you."* |
-| **5** | `6.4s` | Her grandmother sits nearby and asks her a gentle question (`pan-left`) | Brings in the grandmother's warmth and opens the dialogue. |
-| **6** | `5.7s` | Abigiya answers with hands clasped and determined eyes (`push-in`) | Shows Abigiya's pure motivation: stars bring light to darkness, and she wants to make the world better. |
-| **7** | `3.2s` | Grandmother smiles and holds Abigiya's hand (`pull-out`) | An emotional pause that grounds their bond before the central lesson. |
-| **8** | `9.6s` | Grandmother speaks in warm light; a child helps an elderly neighbour (`push-in`) | Delivers the heart of the film: kindness, helping others, and giving hope to the lonely are how people shine. |
-| **9** | `3.7s` | Abigiya looks up at the night sky once more (`pan-left`) | A quiet beat of reflection after her grandmother's words. |
-| **10** | `4.1s` | Abigiya holds a small warm light, calm and understanding (`push-in`) | Marks the internal turning point: she realizes even a small light makes a difference. |
-| **11** | `5.0s` | Abigiya helps villagers in small ways with lanterns and water (`pan-right`) | Shows her changed actions in the village from that night onward. |
-| **12** | `3.8s` (+ `2.6s` card) | Grandmother and Abigiya under the stars + `"Made with AI"` end card (`none`) | Emotional resolution as her grandmother names her **"Kokobe"** (`ኮኮቤ` — "My Star"), followed by the AI disclosure card. |
+| Shot | Duration | Active `characters` | Visual & Camera Motion | Narrative & Emotional Reason (`storyboard.json`) |
+|---|---|---|---|---|
+| **1** | `5.3s` | `[]` (Landscape only) | Ethiopian highland village at dusk, round stone-and-thatch houses (`push-in`, `slow`) | Establishes the time, place, and warm storybook mood in an Ethiopian highland village before introducing the protagonist. |
+| **2** | `5.6s` | `["abigiya"]` | Abigiya sits by her wooden bedroom window looking up at the starry sky (`pan-right`, `slow`) | Introduces Abigiya in her quiet bedroom and establishes her nightly habit of wonder and stargazing. |
+| **3** | `5.2s` | `[]` (Sky only) | Wide night sky over dark Ethiopian hills with one small golden star shining brightest (`push-in`, `slow`) | Introduces the central visual motif of the single small bright star in the night sky. |
+| **4** | `4.8s` | `["abigiya"]` | Abigiya by the window smiling softly up toward the starlight (`push-in`, `slow`) | Captures Abigiya's quiet wish to shine and bring light like the star. |
+| **5** | `6.4s` | `["grandmother", "abigiya"]` | Her grandmother sits nearby in the warm room, asking a gentle question (`pan-left`, `slow`) | Brings in the grandmother's presence and opens the dialogue that drives the lesson. |
+| **6** | `5.7s` | `["abigiya"]` | Abigiya turns with hands clasped over her heart and earnest eyes (`push-in`, `slow`) | Reveals Abigiya's motivation: stars bring light to darkness, and she wants to make the world better. |
+| **7** | `3.2s` | `["grandmother", "abigiya"]` | Close view of the grandmother smiling warmly and holding Abigiya's hands (`pull-out`, `slow`) | Creates an intimate emotional pause that grounds the bond between grandmother and granddaughter before the main lesson. |
+| **8** | `9.6s` | `["grandmother", "abigiya"]` | Grandmother speaks tenderly to Abigiya beside a glowing lantern (`push-in`, `slow`) | Delivers the heart of the story: helping others, sharing kindness, and giving hope are how a person shines. |
+| **9** | `3.7s` | `["abigiya"]` | Abigiya looks back up through the window toward the starry night sky (`pan-left`, `slow`) | Provides a quiet beat of reflection as Abigiya connects her grandmother's words to the star above. |
+| **10** | `4.1s` | `["abigiya"]` | Abigiya holds a small glowing lantern in both hands, lit with understanding (`push-in`, `slow`) | Marks the internal turning point where she understands that even a small light makes a difference. |
+| **11** | `5.0s` | `["abigiya"]` | Abigiya in the village courtyard at dusk sharing lantern light and water (`pan-right`, `slow`) | Shows her changed actions in the community as she brings light and kindness to others. |
+| **12** | `3.8s` (+ `2.6s` card) | `["grandmother", "abigiya"]` | Grandmother embracing Abigiya outside under the starry sky + `"Made with AI"` end card (`none`) | Delivers the emotional payoff as her grandmother names her 'Kokobe' (My Star), leading into the AI disclosure end card. |
 
 ---
 
-## User Tests and What Changed in `storyboard.json`
+## User Tests and How `storyboard.json` Visibly Changed in Git
 
-### Test 1: Early Narration & Radio Cut Prototype (`outputs/radio_cut.mp4`)
+### Test 1: Radio Cut & Early Story Prototype (`commits 30fcc83` & `a215726` → `commit d32e9de`)
 
-- **Prototype Tested:** Audio-first narration cuts over the gentle Tizita pentatonic lullaby underscore on a black screen with subtitles (`radio_cut.mp4`), tested before locking final visual assembly.
-- **Participants (3 target listeners—peers and family reviewers):**
-  - **Listener A** (Native Amharic speaker & software peer)
-  - **Listener B** (Bilingual Amharic/English viewer who watches mobile shorts)
-  - **Listener C** (Family story reviewer)
+- **Prototype Tested:** Our first narration-only prototypes (`runs.jsonl` lines 4–58, `07:35:50Z`–`12:01:44Z`) and the first unedited Abigiya Amharic reading (`runs.jsonl` lines 59–70, `12:44:02Z`–`12:50:13Z`).
+- **Participants (3 target audience members—family & diaspora listeners):**
+  - **Participant 1 (Older Ethiopian family member, native Amharic speaker):** Represents the parent/grandparent generation who passes down family stories.
+  - **Participant 2 (10-year-old younger cousin):** Represents the children's audience for bedtime stories.
+  - **Participant 3 (Young adult diaspora relative watching on mobile):** Represents bilingual Amharic/English mobile viewers.
 - **What They Said:**
-  1. **Fragmented 12-statement structure vs. a real story:** On our initial draft, Listener A and Listener B pointed out that writing 12 isolated one-line statements sounded like disconnected bullet points rather than a cohesive story with emotional bridges between shots.
-  2. **Unnatural literal Amharic & setting mismatch:** When testing the machine-translated Amharic lines and the initial setting (`በጣሊያን` — in Italy), listeners noted that the phrasing felt stiff and that an Ethiopian grandmother-and-granddaughter story (`አቢጊያ` and `ኮኮቤ`) belonged in an Ethiopian village (`በኢትዮጵያ ውብ መንደር`), not Italy.
-  3. **Pacing and length (`~112s` vs. `60–90s`):** In the first unedited Abigiya Amharic TTS run (`runs.jsonl` `13:34:41Z`–`13:38:03Z`), Shots 1–10 alone ran `112.6s` (with Shot 8 taking `20.46s`), which listeners felt dragged too slowly for a mobile short.
-- **How `storyboard.json` Visibly Changed:**
-  1. Replaced the fragmented 12-statement draft with the continuous, natural Amharic bedtime story of Abigiya and her grandmother, written as a unified narrative first and then mapped across the 12 shots (`commit 522ad2a` and `storyboard.json`).
-  2. Changed Shot 1's setting in `storyboard.json` from `"በጣሊያን ውስጥ"` (in Italy) to `"በኢትዮጵያ ውብ መንደር"` (in a beautiful village in Ethiopia) and locked the character description to a young Ethiopian girl in braids and an older Ethiopian grandmother in a white shawl.
-  3. Tightened the verbose Amharic sentences across Shots 1, 2, 5, 6, and 8 while preserving the exact dialogue and the closing nickname `"ኮኮቤ"` (`Kokobe`), bringing the 12-shot timeline from `>120s` down into the `65.0s–70.0s` target window.
+  1. **12 disconnected statements vs. a real family story:** When listening to our first 12-shot draft (`commit 30fcc83` / `commit a215726`, *A New Life for a Software Engineer*, and its literal Amharic translation in `runs.jsonl` lines 47–58), Participant 1 and Participant 3 said the 12 lines sounded like isolated statements rather than a warm family story they would watch with children (`FAILURES.md`, Entry 0), and that literal machine-translated Amharic technical terms (`ሰው ሰራሽ ብልህነት`, `ሞዴሎቹ`) sounded cold and unnatural.
+  2. **First Abigiya reading was too slow (`112.61s` across 10 shots):** When we tested the first unedited *Abigiya and the Little Star* Amharic narration (`runs.jsonl` lines 59–70, `12:44:02Z`–`12:50:13Z`), Participant 2 and Participant 3 liked the grandmother-and-star story, but pointed out that Shots 1–10 alone took `112.61s` (with Shot 8 running `20.46s` at `runs.jsonl` line 68, `12:49:36Z`), which dragged and exceeded the 90-second limit.
+- **How `storyboard.json` Visibly Changed (`git diff a215726..d32e9de storyboard.json`):**
+  1. Replaced the 12-statement developer script in `storyboard.json` with the unified 12-shot Ethiopian bedtime story ***Abigiya and the Little Star* (`ኮኮቤ`)**, set in an Ethiopian village (`በኢትዮጵያ ውብ መንደር`).
+  2. Tightened the Amharic sentence phrasing across Shots 1, 2, 5, 6, and 8 in `storyboard.json` so Shot 8 dropped from `20.46s` (`runs.jsonl` line 68) to `12.20s` on Gemini TTS (`runs.jsonl` line 78) and `9.10s` on `am-ET-MekdesNeural` (`runs.jsonl` line 172), bringing the complete 12-shot film runtime to **`65.0s`**.
 
 ---
 
-### Test 2: Near-Final Cut (`outputs/film_9x16.mp4` and `outputs/film_16x9.mp4`)
+### Test 2: Near-Final Cut (`outputs/film_9x16.mp4` and `outputs/film_16x9.mp4`, `v1` → `v2`)
 
-- **Prototype Tested:** Full 12-shot cut with Cloudflare FLUX.1-schnell storybook keyframes, Ken Burns camera motion, sidechain-ducked Tizita lullaby score, burned-in English subtitles, and the AI end card.
-- **Participants (3 target viewers):**
-  - **Viewer A** (Native Amharic speaker listening on headphones)
-  - **Viewer B** (Mobile viewer watching the `9:16` vertical cut on a phone screen)
-  - **Viewer C** (Desktop viewer watching the `16:9` horizontal cut)
+- **Prototype Tested:** The first assembled 12-shot video (`runs.jsonl` lines 71–125, `13:01:40Z`–`14:02:30Z`) with `keyframes-v1` (`outputs/keyframes-v1-archive/`) and Gemini TTS Amharic narration (`outputs/narration-gemini-archive/`).
+- **Participants (same 3 target audience groups watching the video cut):**
+  - **Participant 1 (Ethiopian family elder listening on speaker)**
+  - **Participant 2 (10-year-old child viewer watching the story illustrations)**
+  - **Participant 3 (Bilingual mobile viewer watching `film_9x16.mp4` on a phone)**
 - **What They Said:**
-  1. **English prefix glitch & American-accented Amharic in Gemini TTS:** On the first full Abigiya render, Viewer A immediately caught that Gemini TTS was speaking English because of the English style prompt prefix (`"Say in a calm, warm, a little brisker voice:"`). After stripping the English prefix, Gemini TTS spoke Amharic, but Viewer A and Viewer B both noted that the voice sounded *"like someone from the USA trying to speak Amharic"* (English vowel coloration and flattened Amharic ejectives), which distracted from the grandmother-and-child intimacy.
-  2. **Visual consistency & subtitle readability:** Viewer B and Viewer C liked the warm hand-painted storybook illustrations and the translucent dark pill behind the English subtitles in the vertical safe area, noting that the gentle Tizita krar lullaby ducked cleanly under the voice without competing with the dialogue.
-- **How `storyboard.json` and the Pipeline Visibly Changed:**
-  1. Stripped the English style instruction prefix from `pipeline/narration.py` (`prompt_mode: "raw_text"`) so non-English prompts are never contaminated by English instructions.
-  2. Added native Ethiopian Amharic neural TTS (`am-ET-MekdesNeural` via `edge-tts`) as the primary voice in `storyboard.json` (`voice.models[0] = "am-ET-MekdesNeural"`, `tempo: 1.0`) while preserving the 3-model Gemini TTS chain (`gemini-3.8-flash-tts`, `gemini-3.8-flash-lite-tts`, `gemini-2.5-flash-preview-tts`) in `voice.models` and keeping the Gemini TTS audio archive in `outputs/narration-gemini-archive/` for comparison.
-  3. Re-ran `make film`, producing the final `65.0s` vertical (`outputs/film_9x16.mp4`) and horizontal (`outputs/film_16x9.mp4`) cuts with authentic Ethiopian Amharic narration.
-
----
-
-## Summary of Key Design Decisions
-
-| Decision | Choice | Why |
-|---|---|---|
-| **Story** | *Abigiya and the Little Star* (`ኮኮቤ`) | A warm Ethiopian grandmother-and-granddaughter story with a clear visual motif (the bright star) and message |
-| **Audience** | Families, children, and diaspora viewers | Suits a gentle bedtime story in Amharic with English subtitles |
-| **Intent** | Hope: small kindness makes a difference | Directly reinforces the grandmother's lesson in Shot 8 |
-| **Narration Voice** | `am-ET-MekdesNeural` primary + 3-model Gemini TTS failover chain | Native Ethiopian Amharic accent and prosody, backed by automated multi-model failover |
-| **Subtitles** | Burned-in English subtitles inside safe margins | Required by the brief; rendered via Pillow + FFmpeg `overlay` so standard FFmpeg works everywhere |
-| **Characters** | Fictional Ethiopian girl (Abigiya) and grandmother | Zero real-person likeness/voice risk; consistent across 12 shots via locked character & style block |
-| **Visual Style** | Soft hand-painted storybook illustration | Cohesive across shots, ethical (no living artist named), and fits the bedtime tone |
+  1. **American accent on Amharic Gemini TTS:** After we stripped the English style prefix (`runs.jsonl` lines 71–83), Gemini TTS read the Amharic words, but Participant 1 and Participant 3 immediately noted that the voice sounded *"like someone from the USA trying to speak Amharic"* (`FAILURES.md`, Entry 9), losing the warmth of an Ethiopian grandmother's storytelling.
+  2. **Characters appearing in the village & star shots, three grandmothers in Shot 8, and shifting dress colors:** Participant 2 pointed out that in Shot 1 (when the narrator talks about the village) and Shot 3 (when the narrator talks about the single bright star in the sky), two people were standing right in the frame instead of just the village and the star; in Shot 8, three different grandmothers appeared in the same room; and Abigiya's dress changed color from green/blue to orange to red across shots (`FAILURES.md`, Entry 12).
+  3. **Shot 8 vertical subtitle box too tall:** Participant 3 noted that Shot 8's 160-character English subtitle wrapped onto 5 lines on the vertical `9:16` cut, crowding the lower picture.
+- **How `storyboard.json` and the Pipeline Visibly Changed (`runs.jsonl` lines 165–215):**
+  1. **Changed `storyboard.json` to add per-shot `characters` and locked outfit colors:** Added `"characters": []` on Shot 1 (village) and Shot 3 (star), `"characters": ["abigiya"]` on solo shots, and `"characters": ["grandmother", "abigiya"]` on duo shots; simplified Shot 8's `picture` prompt so it no longer asked for a second elder; and locked Abigiya's outfit in `storyboard.json` to `"two neat braids wearing a warm yellow-and-teal dress"` and the grandmother's to `"traditional white cotton netela shawl"`. Regenerated the keyframes (`runs.jsonl` lines 177–189).
+  2. **Switched primary voice in `storyboard.json` to native Ethiopian Amharic (`am-ET-MekdesNeural`):** Set `voice.models[0]` to `"am-ET-MekdesNeural"` (`provider: "edge-tts"`, `tempo: 1.0`) and ran `pipeline/narration.py` (`runs.jsonl` lines 165–176) while keeping the 3-model Gemini TTS failover chain in `voice.models[1..3]`.
+  3. **Split long subtitles (>85 chars) into two timed cues:** Updated `pipeline/assemble.py` (`split_subtitle_cues()`) so Shot 8's subtitle splits across two timed 2–3 line cards (`0.0s..3.55s` and `3.55s..9.60s`), keeping vertical subtitles strictly inside the safe area.

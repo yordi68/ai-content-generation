@@ -4,9 +4,21 @@ AI-Content Generation.md
 # Secrets: never commit real keys
 .env
 
-# Generated media: regenerate with make film
+# Generated media binaries are git-ignored; JSON cache sidecars are committed for inspection
 outputs/*
 !outputs/.gitkeep
+!outputs/narration/
+outputs/narration/*
+!outputs/narration/*.json
+!outputs/keyframes/
+outputs/keyframes/*
+!outputs/keyframes/*.json
+!outputs/shots/
+outputs/shots/*
+!outputs/shots/*.json
+!outputs/music/
+outputs/music/*
+!outputs/music/*.json
 
 # Python
 __pycache__/

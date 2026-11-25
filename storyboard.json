@@ -5,7 +5,11 @@
     "16:9"
   ],
   "style_block": "soft hand-painted storybook illustration, warm gentle light, pastel colours, painterly texture",
-  "character": "a young Ethiopian girl about 8 years old, dark hair in braids, a simple colourful dress; an older Ethiopian grandmother with grey hair and a white shawl",
+  "character": "Abigiya, a young Ethiopian girl about 8 years old with dark hair in two neat braids wearing a warm yellow-and-teal dress; and her older Ethiopian grandmother with grey hair wrapped in a traditional white cotton netela shawl",
+  "characters": {
+    "abigiya": "Abigiya, an 8-year-old Ethiopian girl with dark hair in two neat braids wearing a warm yellow-and-teal dress",
+    "grandmother": "an older Ethiopian grandmother with grey hair and a warm expression wearing a traditional white cotton netela shawl"
+  },
   "voice": {
     "provider": "edge-tts",
     "models": [
@@ -15,7 +19,7 @@
       "gemini-2.5-flash-preview-tts"
     ],
     "voice_name": "am-ET-MekdesNeural",
-    "style": "calm, warm, natural Ethiopian Amharic storyteller",
+    "style": "editorial note only (not sent in prompt): calm, warm Ethiopian Amharic bedtime storyteller",
     "tempo": 1.0
   },
   "music": [
@@ -23,7 +27,7 @@
       "id": "cue_01_lullaby",
       "start_shot": 1,
       "end_shot": 12,
-      "caption": "gentle warm Ethiopian krar and soft ambient pad lullaby, peaceful bedtime story underscore, slow tempo, instrumental, no vocals, soft dynamics leaving space for voice narration"
+      "caption": "gentle warm Ethiopian Tizita pentatonic krar and soft ambient pad lullaby, peaceful bedtime story underscore, slow tempo, instrumental, no vocals, soft dynamics leaving space for voice narration"
     }
   ],
   "shots": [
@@ -31,157 +35,193 @@
       "id": 1,
       "narration": "በድሮ ዘመን፣ አቢጊያ የተባለች ትንሽ ልጅ በኢትዮጵያ ውብ መንደር ትኖር ነበር።",
       "subtitle": "Once upon a time, a little girl named Abigiya lived in a beautiful village in Ethiopia.",
-      "picture": "The village at dusk, small houses and hills in soft light.",
+      "picture": "Wide establishing view of a peaceful Ethiopian highland village at dusk, small round stone-and-thatch houses, glowing warm windows, green hills under a twilight sky, no people in foreground.",
+      "characters": [],
       "motion": {
         "type": "push-in",
         "amount": "slow"
       },
       "duration_s": 5.3,
       "seed": 1,
-      "reason": "Sets the place."
+      "reason": "Establishes the time, place, and warm storybook mood in an Ethiopian highland village before introducing the protagonist."
     },
     {
       "id": 2,
       "narration": "በየምሽቱ በመስኮት አጠገብ ተቀምጣ የጨለማውን ሰማይ ከዋክብት ትመለከት ነበር።",
       "subtitle": "Every night, she sat by the window and watched the stars in the dark sky.",
-      "picture": "Abigiya sits by her bedroom window, looking up at the night sky.",
+      "picture": "Abigiya sits by her wooden bedroom window at night, resting her chin on her hands and looking up at the starry night sky.",
+      "characters": [
+        "abigiya"
+      ],
       "motion": {
         "type": "pan-right",
         "amount": "slow"
       },
       "duration_s": 5.6,
       "seed": 2,
-      "reason": "Shows her nightly habit."
+      "reason": "Introduces Abigiya in her quiet bedroom and establishes her nightly habit of wonder and stargazing."
     },
     {
       "id": 3,
       "narration": "አንድ ምሽት፣ ከሁሉም ይበልጥ ደምቃ የምትታይ አንዲት ትንሽ ኮከብ አየች።",
       "subtitle": "One night, she saw a small star shining brighter than all the others.",
-      "picture": "One star shining brighter than the rest over the hills.",
+      "picture": "Wide night sky over dark Ethiopian hills where one small golden star shines much brighter than all the surrounding stars, no people in frame.",
+      "characters": [],
       "motion": {
         "type": "push-in",
         "amount": "slow"
       },
       "duration_s": 5.2,
       "seed": 3,
-      "reason": "Introduces the special star."
+      "reason": "Introduces the central visual motif of the single small bright star in the night sky."
     },
     {
       "id": 4,
       "narration": "ፈገግ ብላም በዝግታ፣ «እኔም ልክ እንዳንቺ ማብራት በቻልኩ» አለች።",
       "subtitle": "She smiled and softly said, \"I wish I could shine like you.\"",
-      "picture": "Abigiya smiles and speaks softly toward the star.",
+      "picture": "Abigiya by the window smiling softly up toward the starlight reflected on her face.",
+      "characters": [
+        "abigiya"
+      ],
       "motion": {
         "type": "push-in",
         "amount": "slow"
       },
       "duration_s": 4.8,
       "seed": 4,
-      "reason": "Shows her wish."
+      "reason": "Captures Abigiya's quiet wish to shine and bring light like the star."
     },
     {
       "id": 5,
       "narration": "አጠገቧ የነበረችው አያቷ ሰምታት፣ «የኔ ውድ፣ ለምን ኮከብ መሆን ፈለግሽ?» ስትል ጠየቀቻት።",
       "subtitle": "Her grandmother, sitting nearby, heard her and asked gently, \"My dear, why did you want to be a star?\"",
-      "picture": "Her grandmother sits nearby, looking at her with a gentle question.",
+      "picture": "Her grandmother sits nearby in the warm room, looking toward Abigiya with a gentle, loving question.",
+      "characters": [
+        "grandmother",
+        "abigiya"
+      ],
       "motion": {
         "type": "pan-left",
         "amount": "slow"
       },
       "duration_s": 6.4,
       "seed": 5,
-      "reason": "Brings in the grandmother."
+      "reason": "Brings in the grandmother's presence and opens the dialogue that drives the lesson."
     },
     {
       "id": 6,
       "narration": "አቢጊያም፣ «ከዋክብት ጨለማን ያበራሉ። ዓለምን የተሻለች ማድረግ እፈልጋለሁ» አለች።",
       "subtitle": "Abigiya replied, \"Stars bring light to the darkness. I want to make the world a better place.\"",
-      "picture": "Abigiya answers, hands clasped, determined.",
+      "picture": "Abigiya turns with hands clasped over her heart and earnest, determined eyes as she answers.",
+      "characters": [
+        "abigiya"
+      ],
       "motion": {
         "type": "push-in",
         "amount": "slow"
       },
       "duration_s": 5.7,
       "seed": 6,
-      "reason": "Shows her reason."
+      "reason": "Reveals Abigiya's motivation: stars bring light to darkness, and she wants to make the world better."
     },
     {
       "id": 7,
       "narration": "አያቷ እጇን ይዘው ፈገግ አሉ።",
       "subtitle": "Her grandmother smiled and took her hand.",
-      "picture": "Grandmother smiles and holds Abigiya's hand.",
+      "picture": "Close view of the grandmother smiling warmly and gently holding Abigiya's small hands.",
+      "characters": [
+        "grandmother",
+        "abigiya"
+      ],
       "motion": {
         "type": "pull-out",
         "amount": "slow"
       },
       "duration_s": 3.2,
       "seed": 7,
-      "reason": "Shows their bond."
+      "reason": "Creates an intimate emotional pause that grounds the bond between grandmother and granddaughter before the main lesson."
     },
     {
       "id": 8,
       "narration": "«አቢጊያ፣ ብርሃን ለማምጣት ኮከብ መሆን አያስፈልግሽም። ሰው ስትረጂ፣ ደግነት ስታካፍሊ ወይም ብቸኛ ለሆነ ተስፋ ስትሰጪ ልክ እንደዚያች ኮከብ ታበሪያለሽ» አሏት።",
       "subtitle": "\"Abigiya, you don't need to be a star to bring light. Every time you help someone, share kindness, or give hope to someone who is lonely, you shine just like that star.\"",
-      "picture": "Grandmother speaks, warm light around her, then a child helps an elderly neighbour through a doorway.",
+      "picture": "The grandmother speaks tenderly to Abigiya beside a glowing lantern while pointing gently toward the warm village outside.",
+      "characters": [
+        "grandmother",
+        "abigiya"
+      ],
       "motion": {
         "type": "push-in",
         "amount": "slow"
       },
       "duration_s": 9.6,
       "seed": 8,
-      "reason": "The main lesson of the story."
+      "reason": "Delivers the heart of the story: helping others, sharing kindness, and giving hope are how a person shines."
     },
     {
       "id": 9,
       "narration": "አቢጊያ ወደ ሰማይ አሻቅባ ተመለከተች።",
       "subtitle": "Abigiya looked up at the sky again.",
-      "picture": "Abigiya looks up at the sky once more.",
+      "picture": "Abigiya looks back up through the window toward the starry night sky with a calm, thoughtful expression.",
+      "characters": [
+        "abigiya"
+      ],
       "motion": {
         "type": "pan-left",
         "amount": "slow"
       },
       "duration_s": 3.7,
       "seed": 9,
-      "reason": "A calm return to the stars."
+      "reason": "Provides a quiet beat of reflection as Abigiya connects her grandmother's words to the star above."
     },
     {
       "id": 10,
       "narration": "ትንሽ ብርሃን እንኳን ለውጥ እንደሚያመጣ ተረዳች።",
       "subtitle": "She understood that even a small light can make a difference.",
-      "picture": "Abigiya holds a small light, calm and understanding.",
+      "picture": "Abigiya holds a small glowing lantern in both hands, her face lit with warm understanding.",
+      "characters": [
+        "abigiya"
+      ],
       "motion": {
         "type": "push-in",
         "amount": "slow"
       },
       "duration_s": 4.1,
       "seed": 10,
-      "reason": "Shows her new understanding."
+      "reason": "Marks the internal turning point where she understands that even a small light makes a difference."
     },
     {
       "id": 11,
       "narration": "ከዚያ ምሽት ጀምሮ በሰዎች ሕይወት ትንሽ ብርሃን ለማምጣት ጣረች።",
       "subtitle": "From that night on, she tried to bring a little light into people's lives.",
-      "picture": "Abigiya helps villagers in small ways, with lanterns and water.",
+      "picture": "Abigiya in the village courtyard at dusk sharing a warm lantern light and a cup of water with a smiling village child.",
+      "characters": [
+        "abigiya"
+      ],
       "motion": {
         "type": "pan-right",
         "amount": "slow"
       },
       "duration_s": 5.0,
       "seed": 11,
-      "reason": "Shows her changed life."
+      "reason": "Shows her changed actions in the community as she brings light and kindness to others."
     },
     {
       "id": 12,
       "narration": "አያቷም ይህን አይተው «ኮኮቤ» ብለው ሰየሟት።",
       "subtitle": "Her grandmother saw this and named her \"Kokobe.\"",
-      "picture": "Grandmother and Abigiya under the stars, the end card with 'Made with AI' added in code.",
+      "picture": "The grandmother embracing Abigiya outside under the starry Ethiopian night sky with warm lantern light around them.",
+      "characters": [
+        "grandmother",
+        "abigiya"
+      ],
       "motion": {
         "type": "none",
         "amount": "none"
       },
       "duration_s": 3.8,
       "seed": 12,
-      "reason": "The closing image. The end card text is added in code, since AI-generated text tends to come out garbled."
+      "reason": "Delivers the emotional payoff as her grandmother names her 'Kokobe' (My Star), leading into the AI disclosure end card."
     }
   ]
 }

@@ -1,4 +1,5 @@
 import json
+import re
 import subprocess
 import sys
 import textwrap
@@ -29,6 +30,9 @@ def load_font(size):
         "/System/Library/Fonts/Supplemental/Arial.ttf",
         "/System/Library/Fonts/Helvetica.ttc",
         "/Library/Fonts/Arial.ttf",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+        "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
     ]
     for path in candidates:
         if Path(path).exists():
@@ -39,16 +43,33 @@ def load_font(size):
     return ImageFont.load_default()
 
 
+def split_subtitle_cues(text, duration_s):
+    """Split subtitles longer than 85 chars into two timed cues so each cue stays <= 3 lines."""
+    if len(text) <= 85:
+        return [(text, 0.0, duration_s)]
+    if ". " in text:
+        first, second = text.split(". ", 1)
+        first = first + "."
+    else:
+        words = text.split()
+        mid = len(words) // 2
+        first = " ".join(words[:mid])
+        second = " ".join(words[mid:])
+    ratio = max(0.30, min(0.70, len(first) / max(1, len(text))))
+    split_t = round(duration_s * ratio, 2)
+    return [(first, 0.0, split_t), (second, split_t, duration_s)]
+
+
 def render_subtitle_overlay(text, width, height, out_path):
     img = Image.new("RGBA", (width, height), (0, 0, 0, 0))
     draw = ImageDraw.Draw(img)
 
     is_vertical = height > width
-    font_size = 30 if is_vertical else 28
-    max_chars = 34 if is_vertical else 54
+    font_size = 28 if is_vertical else 28
+    max_chars = 36 if is_vertical else 54
     font = load_font(font_size)
 
-    lines = textwrap.wrap(text, width=max_chars)
+    lines = textwrap.wrap(text, width=max_chars)[:3]
     line_gap = 8
     bboxes = [draw.textbbox((0, 0), line, font=font) for line in lines]
     line_heights = [b[3] - b[1] for b in bboxes]
@@ -57,7 +78,6 @@ def render_subtitle_overlay(text, width, height, out_path):
     block_w = max(line_widths) if line_widths else 0
     block_h = sum(line_heights) + line_gap * max(0, len(lines) - 1)
 
-    # Safe area positioning (above bottom UI controls on 9:16 vertical feeds)
     bottom_margin = int(height * 0.16) if is_vertical else int(height * 0.09)
     box_y1 = height - bottom_margin - block_h
     box_x1 = (width - block_w) // 2
@@ -78,20 +98,21 @@ def render_subtitle_overlay(text, width, height, out_path):
     img.save(out_path, "PNG")
 
 
-def render_end_card_image(title, width, height, out_path):
+def render_end_card_image(board, width, height, out_path):
     img = Image.new("RGB", (width, height), (20, 22, 34))
     draw = ImageDraw.Draw(img)
 
-    title_font = load_font(38 if width >= height else 34)
-    sub_font = load_font(26 if width >= height else 24)
-    small_font = load_font(20 if width >= height else 18)
+    title_font = load_font(36 if width >= height else 32)
+    sub_font = load_font(25 if width >= height else 23)
+    small_font = load_font(19 if width >= height else 17)
 
+    active_voice = board["voice"]["models"][0]
     lines = [
-        (title, title_font, (255, 236, 179)),
+        (board["title"], title_font, (255, 236, 179)),
         ("ኮኮቤ • Kokobe", sub_font, (240, 240, 245)),
         ("Made with AI", sub_font, (255, 210, 120)),
-        ("Narrated with Gemini TTS • Illustrated with FLUX.1", small_font, (190, 195, 210)),
-        ("Assembled with FFmpeg from storyboard.json", small_font, (190, 195, 210)),
+        (f"Narrated with {active_voice} (Edge TTS) & Gemini TTS", small_font, (190, 195, 210)),
+        ("Illustrated with FLUX.1-schnell • Assembled with FFmpeg", small_font, (190, 195, 210)),
     ]
 
     total_h = len(lines) * 52
@@ -107,7 +128,7 @@ def render_end_card_image(title, width, height, out_path):
 
 
 def build_master_audio(board):
-    tempo = board["voice"].get("tempo", 1.08)
+    tempo = board["voice"].get("tempo", 1.0)
     seg_paths = []
 
     for shot in board["shots"]:
@@ -130,7 +151,6 @@ def build_master_audio(board):
         )
         seg_paths.append(seg_wav)
 
-    # Silence segment for end card
     end_silence = BUILD_DIR / "voice_end_silence.wav"
     subprocess.run(
         [
@@ -159,26 +179,65 @@ def build_master_audio(board):
         stderr=subprocess.PIPE,
     )
 
-    total_dur = sum(s["duration_s"] for s in board["shots"]) + END_CARD_DURATION_S
+    total_dur = round(sum(s["duration_s"] for s in board["shots"]) + END_CARD_DURATION_S, 1)
+    premix_audio = BUILD_DIR / "premix_ducked.wav"
     master_audio = BUILD_DIR / "master_audio.wav"
 
-    # Sidechain ducking (Appendix B: threshold=0.02, ratio=6, attack=300ms, release=1500ms)
-    # followed by EBU R128 loudness normalization to -14 LUFS, -1.0 dB true peak
-    filter_complex = (
+    # Step 1: Sidechain compression ducking
+    duck_filter = (
         "[0:a]asplit=2[vo_sc][vo_mix];"
         "[1:a]volume=0.55[music_pre];"
         "[music_pre][vo_sc]sidechaincompress=threshold=0.02:ratio=6:attack=300:release=1500[music_ducked];"
-        "[vo_mix][music_ducked]amix=inputs=2:duration=first:dropout_transition=0:weights='1.25 0.75',"
-        "loudnorm=I=-14:TP=-1.0:LRA=11[aout]"
+        "[vo_mix][music_ducked]amix=inputs=2:duration=first:dropout_transition=0:weights='1.25 0.75'[aout]"
     )
     subprocess.run(
         [
             "ffmpeg", "-y",
             "-i", str(voice_stem),
             "-stream_loop", "-1", "-i", str(MUSIC_PATH),
-            "-filter_complex", filter_complex,
+            "-filter_complex", duck_filter,
             "-map", "[aout]",
             "-t", f"{total_dur:.2f}",
+            "-c:a", "pcm_s16le",
+            str(premix_audio),
+        ],
+        check=True,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.PIPE,
+    )
+
+    # Step 2: Two-pass EBU R128 loudness normalization (-14.0 LUFS, -1.0 dBTP)
+    pass1 = subprocess.run(
+        [
+            "ffmpeg", "-y", "-i", str(premix_audio),
+            "-af", "loudnorm=I=-14:TP=-1.0:LRA=11:print_format=json",
+            "-f", "null", "-",
+        ],
+        check=True,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
+    match = re.search(r"\{\s*\"input_i\"[\s\S]*?\}", pass1.stderr)
+    loud_stats = json.loads(match.group(0)) if match else {}
+
+    if loud_stats:
+        ln_pass2 = (
+            f"loudnorm=I=-14:TP=-1.0:LRA=11:"
+            f"measured_I={loud_stats['input_i']}:"
+            f"measured_TP={loud_stats['input_tp']}:"
+            f"measured_LRA={loud_stats['input_lra']}:"
+            f"measured_thresh={loud_stats['input_thresh']}:"
+            f"offset={loud_stats['target_offset']}:linear=true"
+        )
+    else:
+        ln_pass2 = "loudnorm=I=-14:TP=-1.0:LRA=11"
+
+    subprocess.run(
+        [
+            "ffmpeg", "-y", "-i", str(premix_audio),
+            "-af", ln_pass2,
+            "-ar", "44100", "-ac", "2",
             "-c:a", "pcm_s16le",
             str(master_audio),
         ],
@@ -186,7 +245,41 @@ def build_master_audio(board):
         stdout=subprocess.DEVNULL,
         stderr=subprocess.PIPE,
     )
-    return master_audio, total_dur
+    return master_audio, total_dur, loud_stats
+
+
+def overlay_subtitles_on_video(input_args, shot, width, height, tag_prefix, out_mp4, preset="fast"):
+    shot_id = shot["id"]
+    dur = shot["duration_s"]
+    cues = split_subtitle_cues(shot["subtitle"], dur)
+    png_inputs = []
+    filter_parts = []
+    last_label = "[0:v]"
+
+    for idx, (cue_text, t0, t1) in enumerate(cues, start=1):
+        sub_png = BUILD_DIR / f"{tag_prefix}_sub_{shot_id:02d}_part{idx}.png"
+        render_subtitle_overlay(cue_text, width, height, sub_png)
+        png_inputs.extend(["-i", str(sub_png)])
+        next_label = f"[v{idx}]"
+        filter_parts.append(
+            f"{last_label}[{idx}:v]overlay=0:0:enable='between(t,{t0:.2f},{t1:.2f})'{next_label}"
+        )
+        last_label = next_label
+
+    filter_complex = ";".join(filter_parts) + f";{last_label}format=yuv420p[vout]"
+    cmd = (
+        ["ffmpeg", "-y"]
+        + input_args
+        + png_inputs
+        + [
+            "-filter_complex", filter_complex,
+            "-map", "[vout]",
+            "-t", f"{dur:.2f}",
+            "-c:v", "libx264", "-preset", preset, "-crf", "20", "-an",
+            str(out_mp4),
+        ]
+    )
+    subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
 
 
 def build_radio_cut(board, master_audio, total_dur):
@@ -197,27 +290,13 @@ def build_radio_cut(board, master_audio, total_dur):
     for shot in board["shots"]:
         shot_id = shot["id"]
         dur = shot["duration_s"]
-        sub_png = BUILD_DIR / f"radio_sub_{shot_id:02d}.png"
-        render_subtitle_overlay(shot["subtitle"], width, height, sub_png)
         seg_mp4 = BUILD_DIR / f"radio_seg_{shot_id:02d}.mp4"
-        subprocess.run(
-            [
-                "ffmpeg", "-y",
-                "-f", "lavfi", "-i", f"color=c=black:s={width}x{height}:r={FPS}:d={dur:.2f}",
-                "-i", str(sub_png),
-                "-filter_complex", "[0:v][1:v]overlay=0:0,format=yuv420p",
-                "-t", f"{dur:.2f}",
-                "-c:v", "libx264", "-preset", "ultrafast", "-crf", "23", "-an",
-                str(seg_mp4),
-            ],
-            check=True,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.PIPE,
-        )
+        input_args = ["-f", "lavfi", "-i", f"color=c=black:s={width}x{height}:r={FPS}:d={dur:.2f}"]
+        overlay_subtitles_on_video(input_args, shot, width, height, "radio", seg_mp4, preset="ultrafast")
         seg_clips.append(seg_mp4)
 
     end_png = BUILD_DIR / "end_card_16x9.png"
-    render_end_card_image(board["title"], width, height, end_png)
+    render_end_card_image(board, width, height, end_png)
     end_mp4 = BUILD_DIR / "radio_end.mp4"
     subprocess.run(
         [
@@ -262,33 +341,16 @@ def build_aspect_film(board, aspect, master_audio, total_dur):
 
     for shot in board["shots"]:
         shot_id = shot["id"]
-        dur = shot["duration_s"]
         shot_mp4 = SHOTS_DIR / f"shot_{shot_id:02d}_{aspect_tag}.mp4"
         if not shot_mp4.exists():
             raise SystemExit(f"Missing moving shot: {shot_mp4}")
 
-        sub_png = BUILD_DIR / f"sub_{shot_id:02d}_{aspect_tag}.png"
-        render_subtitle_overlay(shot["subtitle"], width, height, sub_png)
         sub_mp4 = BUILD_DIR / f"sub_shot_{shot_id:02d}_{aspect_tag}.mp4"
-
-        subprocess.run(
-            [
-                "ffmpeg", "-y",
-                "-i", str(shot_mp4),
-                "-i", str(sub_png),
-                "-filter_complex", "[0:v][1:v]overlay=0:0,format=yuv420p",
-                "-t", f"{dur:.2f}",
-                "-c:v", "libx264", "-preset", "fast", "-crf", "20", "-an",
-                str(sub_mp4),
-            ],
-            check=True,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.PIPE,
-        )
+        overlay_subtitles_on_video(["-i", str(shot_mp4)], shot, width, height, aspect_tag, sub_mp4, preset="fast")
         seg_clips.append(sub_mp4)
 
     end_png = BUILD_DIR / f"end_card_{aspect_tag}.png"
-    render_end_card_image(board["title"], width, height, end_png)
+    render_end_card_image(board, width, height, end_png)
     end_mp4 = BUILD_DIR / f"end_card_{aspect_tag}.mp4"
     subprocess.run(
         [
@@ -338,7 +400,7 @@ def main():
     BUILD_DIR.mkdir(parents=True, exist_ok=True)
 
     start = time.monotonic()
-    master_audio, total_dur = build_master_audio(board)
+    master_audio, total_dur, loud_stats = build_master_audio(board)
     radio_path = build_radio_cut(board, master_audio, total_dur)
     print(f"assemble: radio_cut.mp4 ready ({total_dur:.1f}s)")
 
@@ -353,11 +415,16 @@ def main():
         {
             "stage": "assemble",
             "provider": "local-ffmpeg",
-            "model": "ffmpeg-sidechain-loudnorm-overlay",
+            "model": "ffmpeg-sidechain-2pass-loudnorm-overlay",
             "params": {
                 "aspect_ratios": board["aspect_ratios"],
                 "loudnorm_target_lufs": -14.0,
                 "true_peak_db": -1.0,
+                "loudnorm_pass1_measured": {
+                    "input_i": loud_stats.get("input_i"),
+                    "input_tp": loud_stats.get("input_tp"),
+                    "input_lra": loud_stats.get("input_lra"),
+                },
                 "sidechain": {"threshold": 0.02, "ratio": 6, "attack_ms": 300, "release_ms": 1500},
                 "end_card_s": END_CARD_DURATION_S,
             },

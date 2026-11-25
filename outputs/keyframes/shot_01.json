@@ -1,0 +1,9 @@
+{
+  "cache_key": "be8ea40b2d9474cfe7b5136ffdcf66871dc49d1d7efffb2d4eeb2ab138980c2e",
+  "code_version": "keyframes-v2",
+  "model": "@cf/black-forest-labs/flux-1-schnell",
+  "seed": 1,
+  "steps": 4,
+  "prompt": "soft hand-painted storybook illustration, warm gentle light, pastel colours, painterly texture. Scene: Wide establishing view of a peaceful Ethiopian highland village at dusk, small round stone-and-thatch houses, glowing warm windows, green hills under a twilight sky, no people in foreground. Centered subject composition, balanced framing for both 9:16 vertical and 16:9 horizontal crops, pure illustration without any text, letters, numbers, or signatures.",
+  "bytes": 600944
+}

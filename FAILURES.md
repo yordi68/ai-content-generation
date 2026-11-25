@@ -1,84 +1,107 @@
-So first when I was generating the script, while I was working with the tool I'm using, it generated like the assessment file said, "For us to use 8 to 12 shots, so I went with 12 to 12 shots, it generated 12 statements. So when you read or listen, when you read that 12 statements, it actually doesn't tell a story. So if the story is going to be bad, it's not going to be a good video. So for that, what I first did is I generated, I gave it some ideas and generated a whole paragraph and then I read that after I read that, then it's better to split it to 12 sections. So I think that's a better way to generate the narration.
+# Failure Journal — What Broke, What I Tried, and What Fixed It
 
-## Narration stage: the story in plain language (25 Nov 2026)
+---
 
-I wanted the narrator to sound like one steady person from the first line to the last. The free Google voice I chose sounds good, but it has a limit on how much it can be used each day. I hit that limit part of the way through making the narration, and the work stopped.
+## 0. Generating 12 Isolated Shot Statements Instead of a Connected Story
 
-What I did about it, in order:
+When I first started drafting the script to match the brief's 8–12 shot requirement, I went with 12 shots and generated 12 separate one-line statements. When I read and listened to those 12 statements back-to-back, they did not tell a unified story—they sounded like 12 disconnected bullet points. If the story is fragmented, no amount of visual polish makes a good film.
+- **What I changed:** I wrote the entire narrative as a single continuous story paragraph first, read it aloud to verify the emotional bridges between beats, and only then divided it into 12 connected shots in `storyboard.json` (`commit 522ad2a` on `local-voice` and `commit d32e9de` on `main`).
 
-- **Slowed the voice down to a faster pace.** The first version ran about 100 seconds, which is longer than the 90 seconds the brief allows. Speeding the voice up brought it to about 75 seconds.
-- **Set up back-up voices.** When the first voice runs out, the work moves to a second Google voice, then a third. This kept the film moving, but the back-up voices sound a little faster and shorter, so the film now mixes voices.
-- **Planned to replace the back-up voice later.** The main voice came back for one part of the film, so the other mixed parts can be remade with it once the limit fully resets. That's the plan for the next run.
+---
 
-The bigger idea I discussed is to make every part sound like the same person, even when different companies make the sound. This is called voice cloning: you record one sample of a voice, and another company copies it. The cost of that idea is:
+## 1. Narration Stage: Plain-Language Summary of the Quota & Voice Journey
 
-- **Permission.** The copy needs a real person's voice. I would need their written consent, recorded in the ethics file, before using it. My narrator was meant to be invented, so this adds work.
-- **Money.** The free voice services don't offer voice copying in the languages I need. I would need paid accounts with other companies.
-- **Imperfect results.** A copy from one company won't match another company's voice exactly. I would still need to listen to both and decide whether the difference matters.
-- **Time.** Testing, paying and recording would take days, not hours.
+I wanted the narrator to sound like one steady storyteller from the first line to the last. The free Google Gemini voice (`gemini-3.8-flash-tts`, voice `Kore`) sounded warm on English, but I hit a hard wall halfway through generating the 12 shots: the requests failed with `HTTP 429 Too Many Requests` (`runs.jsonl` line 10, `2026-11-25T07:36:18Z`).
 
-There's also a free option: a voice that runs on my own computer. It never runs out, but it sounds different from the Google voice, so the film would still have a third voice unless I remade everything with it.
+Here is the thought process I went through and the trade-offs of each solution I tested:
 
-What the choice comes down to:
+1. **Adjusting delivery pace and tempo (`unhurried` → `a little brisker` + `atempo`):**
+   - My first English narration run projected to ~100 seconds (`runs.jsonl` lines 4–9, `07:35:50Z`–`07:36:18Z`), exceeding the brief's 90-second maximum. Switching the style prompt to `"calm, warm, a little brisker"` (`runs.jsonl` lines 13–17, `07:39:54Z`–`07:40:14Z`) and applying `atempo=1.08` brought the duration inside the 60–90 second target.
+2. **Evaluating Cross-Provider Voice Cloning vs. Multi-Model Failover:**
+   - When `gemini-3.8-flash-tts` ran out of quota after 6–10 shots, I considered cross-provider voice cloning (cloning one reference voice across ElevenLabs, Cartesia, and Gemini). I rejected voice cloning for four reasons:
+     - **Consent gate:** Cloning requires recording a real person's voice and documenting written consent in `ETHICS.md`, whereas my film was designed around fictional characters and synthetic voices.
+     - **Cost:** Free tiers on commercial voice-cloning APIs do not support custom Amharic voice clones without paid billing.
+     - **Voice mismatch:** Even trained on the same sample, different providers' prosody and Amharic phoneme handling differ.
+     - **Time:** Setting up and verifying multi-provider clones would take days rather than hours.
+3. **Testing a Local Open-Weight CPU Voice (`piper-tts` on the `local-voice` branch):**
+   - To eliminate cloud quotas completely, I created the `local-voice` git branch and ran `piper-tts` (`en_US-lessac-medium.onnx`) locally on CPU. It synthesized all 12 English shots in `2.85s` total with zero quota limits, but its default speech was only `36.49s` (too fast for a 60–90s film), slowing `length_scale` to `1.7–2.3` sounded noticeably stretched, and Piper has no open-weight Amharic model.
+4. **Solving the Gemini Quota with Pacing + 3-Model Failover, Then Solving Amharic Phonology:**
+   - By inspecting the full 429 JSON error body (`runs.jsonl` line 32, `07:58:11Z`) and the Google AI Studio rate-limit dashboard, I discovered that each Gemini TTS model enforces **3 requests per minute (RPM)** and **10 requests per day (RPD)** independently.
+   - Adding a 20-second pacing delay between calls (`pace()`) eliminated RPM 429 errors, and chaining `gemini-3.8-flash-tts` → `gemini-3.8-flash-lite-tts` → `gemini-2.5-flash-preview-tts` allowed all 12 shots to finish in one run (`runs.jsonl` lines 71–83, `13:01:40Z`–`13:05:40Z`).
+   - Finally, when native listening revealed that Gemini TTS spoke Amharic with an American English accent, I integrated native Ethiopian Amharic neural TTS (`am-ET-MekdesNeural` via `edge-tts`, logged under `stage: "narration"` in `runs.jsonl` lines 165–176, `16:50:01Z`–`16:50:26Z`) as the primary voice in `storyboard.json` while keeping the 3-model Gemini TTS failover chain intact.
 
-1. **Keep the mix and accept two voices.** Free and fast, but the change is noticeable.
-2. **Wait for the limit to reset, then remake the back-up parts with the main voice.** Free, and the voice stays the same, but it costs a day or so of waiting.
-3. **Clone one voice with a paid service.** Costs money, needs written permission from the voice's owner, and takes several days to test.
-4. **Switch everything to a free voice on my computer.** Free, never runs out, but it means remaking every part, and the voice won't match the Google one.
+---
 
-My recommendation is option 2, because it keeps one voice and costs nothing beyond waiting.
+## 2. Detailed Technical Log of Failures and Resolutions
 
-## Narration stage: problems and fixes, in detail (25 Nov 2026)
+### Entry 1: Cold-Start Latency Spike on `gemini-3.8-flash` (`137.51s`)
+- **Evidence:** `runs.jsonl` line 1 (`2026-11-25T04:12:00Z`).
+- **What broke:** The initial smoke-test text generation call to `gemini-3.8-flash` took `137.51s` (`2m 17.5s`) to return the single word `"ready"`.
+- **Resolution:** Added explicit HTTP timeouts (`TIMEOUT_S = 180` in `narration.py`, `120` in `keyframes.py`) and structured retry handling so a stalled request never hangs the pipeline indefinitely.
 
-**1. Gemini 3.8 Flash text call took 2 min 17 s.**
-Tried: one smoke test call, timed and logged in runs.jsonl.
-Status: open. Not seen again yet. Watch latency in later runs.
+### Entry 2: Gemini TTS HTTP 429 Quota Exhaustion (3 RPM and 10 RPD Limits)
+- **Evidence:** `runs.jsonl` lines 10–12 (`2026-11-25T07:36:18Z`–`07:36:36Z`) and lines 32–34 (`07:58:11Z`–`07:58:36Z`).
+- **What broke:** After 6 clips, `gemini-3.8-flash-tts` rejected Shot 7 with `HTTP Error 429: Too Many Requests`. Blind retries failed in `0.62s–1.25s` and burned daily quota on the AI Studio dashboard (`13 / 10 RPD` and `5 / 3 RPM` recorded).
+- **Resolution:**
+  1. Logged the full HTTP 429 response body (`runs.jsonl` line 32), which revealed: `Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 10, model: gemini-3.8-flash-tts, description: Generate content requests per day limit exceeded on Free Tier.`
+  2. Added `pace()` (`MIN_GAP_S = 20`) in `pipeline/narration.py` to stay under 3 RPM.
+  3. Added `requests_today(model, key_id)` in `pipeline/runlog.py` (using `America/Los_Angeles` quota reset boundaries and an 8-char SHA-256 key fingerprint) to skip any model at 10/10 RPD and immediately switch models on `"per day"` 429 errors without retrying.
 
-**2. Gemini TTS returned HTTP 429 (Too Many Requests) on shot 7.**
-After six clips, the main model rejected requests. Retries failed in about 1 second each, which points to a quota limit, not a slow server.
-Tried: retry with a wait, then stop. The full error text was not logged at first.
-Fixed: the script now logs Google's full error message, so I can tell a per-minute limit from a daily one.
-Status: open. The quota limit is not yet explained.
+### Entry 3: Headerless Raw PCM Audio from `gemini-2.5-flash-preview-tts` Crashed `wave.open()`
+- **Evidence:** `pipeline/narration.py` (`to_wav()`).
+- **What broke:** When Shot 6 failed over from `gemini-3.8-flash-tts` to `gemini-2.5-flash-preview-tts`, the API returned raw 16-bit mono PCM audio (`audio/L16;rate=24000`) without a `RIFF` WAV header, crashing `wave.open()` with `wave.Error: file does not start with RIFF id`.
+- **Resolution:** Added `to_wav(mime, audio)` in `pipeline/narration.py`, which checks `if audio[:4] == b"RIFF":` and wraps raw PCM bytes in a valid 16-bit mono RIFF WAV container at the sample rate parsed from `mimeType` (`24000 Hz`).
 
-**3. The backup model returned audio the WAV reader could not open.**
-Gemini 2.5 Flash TTS returned raw audio without a WAV header. The script crashed when it tried to read the length.
-Fixed: the script detects raw audio and wraps it in a WAV header, using the sample rate in the response.
+### Entry 4: Voice Pacing Discrepancy Between Primary (`3.8-flash-tts`) and Fallback (`2.5-flash-preview-tts`)
+- **Evidence:** `runs.jsonl` lines 13–17 (`3.8-flash-tts`: `6.36s–9.64s`/shot) vs. lines 20–28 (`2.5-flash-preview-tts`: `3.17s–5.21s`/shot).
+- **What broke:** When a run split across `3.8-flash-tts` (Shots 1–5) and `2.5-flash-preview-tts` (Shots 6–10), the fallback model spoke ~35% faster, causing a noticeable shift in cadence mid-film.
+- **Resolution:** Added automatic primary-upgrade logic in `generate()` so cached fallback clips upgrade to the primary model when quota is available (`runs.jsonl` lines 35–45, `08:41:28Z`–`08:43:29Z`), and ultimately unified all 12 shots on `am-ET-MekdesNeural` (`runs.jsonl` lines 165–176).
 
-**4. Fallback clips are a different voice and pace.**
-Shots 6 to 10 and 12 came from the backup model. They run about 3 to 5 seconds, against 6 to 10 seconds for the main model on the same kind of line. The film's voice changes partway through.
-Tried: a rule to regenerate fallback clips with the main model on each run.
-Status: open until the main model's quota resets. Shots 6 to 10 and 12 still need the upgrade.
+### Entry 5: First Unified Single-Model Run Exceeded 90 Seconds (`96.8s` / `112.6s`)
+- **Evidence:** `runs.jsonl` lines 35–45 (`08:41:28Z`–`08:43:29Z`, English draft `96.8s` with pauses) and lines 59–70 (`12:44:02Z`–`12:50:13Z`, first Abigiya Amharic draft `112.6s` across Shots 1–10 alone, with Shot 8 taking `20.46s` at line 68, `12:49:36Z`).
+- **What broke:** Both the unhurried English narration and the first verbose Amharic Abigiya draft exceeded the brief's 60–90 second runtime ceiling.
+- **Resolution:** Tightened the Amharic sentence phrasing across Shots 1, 2, 5, 6, and 8 in `storyboard.json` and added `validate.py` runtime enforcement (`60.0s <= total_s <= 90.0s`). The final film runs exactly **`65.0s`** (`62.4s` across 12 shots + `2.6s` end card).
 
-**5. The first full narration ran about 100 seconds.**
-The approved voice style ("calm, warm, unhurried") made the film longer than the brief's 90-second limit.
-Fixed: changed the style to "calm, warm, a little brisker". The total is now 74.6 seconds. This regenerated all clips, which used quota.
+### Entry 6: Single Fallback Model Also Exhausted at Shot 11
+- **Evidence:** `runs.jsonl` line 30 (`2026-11-25T07:41:03Z`, `gemini-2.5-flash-preview-tts` 429 on Shot 11).
+- **What broke:** A two-model chain still stalled when both models hit their rate/daily limits during iterative testing.
+- **Resolution:** Following a colleague's recommendation, expanded `voice.models` to a 3-model Gemini chain (`gemini-3.8-flash-tts`, `gemini-3.8-flash-lite-tts`, `gemini-2.5-flash-preview-tts`, verified in `runs.jsonl` lines 71–83, `13:01:40Z`–`13:05:40Z`) plus `am-ET-MekdesNeural` (`edge-tts`).
 
-**6. Both models were out of quota for shots 11 and 12 (10 RPD per model).**
-A single fallback could not finish the 12-shot film because each Gemini TTS model on the Free Tier has a 10 requests-per-day (RPD) limit and a 3 requests-per-minute (RPM) limit.
-Fixed: following a colleague's recommendation on Slack, I configured an ordered fallback chain across three distinct Gemini TTS models (`gemini-3.8-flash-tts`, `gemini-3.8-flash-lite-tts`, and `gemini-2.5-flash-preview-tts`), because each model has its own independent per-minute and per-day request quota (30 RPD combined per project), and `gemini-3.8-flash-lite-tts` stays within the 3.8 family for Amharic support. I also added 20-second pacing between calls to stay under the 3 RPM limit.
+### Entry 7: Partial Run Crash Left `duration_s` Unset in `storyboard.json`
+- **What broke:** When an early run aborted on Shot 7 or Shot 11 due to HTTP 429, `storyboard.json` still had `duration_s: null` because `storyboard.json` is written after the loop completes.
+- **Resolution:** Per-shot sidecar caching (`outputs/narration/shot_XX.json`) ensures any subsequent run immediately reuses all completed shots in milliseconds and finishes writing `duration_s` for all 12 shots once the final shot succeeds.
 
-**7. A crash halfway left the storyboard without durations.**
-The script writes `duration_s` only at the end of a full run.
-Fixed by design: each finished clip is cached, so a re-run skips finished shots, and the storyboard is written once all 12 are done.
+### Entry 8: English Style Instruction Prefix Caused Gemini TTS to Speak English Instead of Amharic
+- **Evidence:** `runs.jsonl` lines 61–70 (`12:47:15Z`–`12:50:13Z`) vs. lines 71–83 (`13:01:40Z`–`13:05:40Z`).
+- **What broke:** When I listened to the Abigiya clips generated in lines 61–70, the narrator spoke **English** even though `shot["narration"]` in `storyboard.json` was written in Amharic Ge'ez script. The root cause was line 67 of `pipeline/narration.py`, which sent `"Say in a calm, warm, a little brisker voice: <Amharic text>"`. Because Gemini 3.8 Flash TTS is a generative multimodal LLM rather than a phoneme-only TTS reader, starting the prompt in English steered the model into translating/speaking in English.
+- **Resolution:** Removed the English prefix so `narration.py` sends only the raw Amharic `narration` string (`"prompt_mode": "raw_text"`), and documented in `schema/storyboard.schema.json` that `voice.style` is an editorial note only and is never prepended to non-English prompts.
 
-**8. An English style prefix caused Gemini TTS to speak English instead of Amharic.**
-When I listened to the generated Abigiya clips, the narrator spoke in English even though `shot["narration"]` in `storyboard.json` was written in Amharic.
-Why it happened: the script sent `"Say in a calm, warm, a little brisker voice: <Amharic text>"`. Because Gemini 3.8 Flash TTS is a generative language-and-audio model rather than a rigid text reader, starting the prompt with an English instruction steered the model into speaking English (translating or responding to the prompt) instead of reading the Amharic text verbatim. In the earlier smoke test, sending pure Amharic text with no English prefix spoke Amharic properly.
-Fixed: removed the English `"Say in a ... voice:"` prefix from `pipeline/narration.py` so the request sends only the raw Amharic `narration` string, and bumped the cache key so old English-contaminated clips are not reused.
+### Entry 9: Gemini TTS Speaks Amharic with an American English Accent
+- **Evidence:** `runs.jsonl` lines 71–83 (`13:01:40Z`–`13:05:40Z`, archived in `outputs/narration-gemini-archive/`) vs. lines 165–176 (`16:50:01Z`–`16:50:26Z`, `am-ET-MekdesNeural` in `outputs/narration/`).
+- **What broke:** After stripping the English prefix, `gemini-3.8-flash-lite-tts` and `gemini-2.5-flash-preview-tts` read the Amharic words in Amharic, but with a heavy American English accent (English vowel coloration and flattened Amharic ejectives like `ጥ`, `ጭ`, `ቅ`).
+- **Resolution:** Preserved the Gemini TTS Amharic clips in `outputs/narration-gemini-archive/` as benchmark evidence, integrated native Ethiopian Amharic neural TTS (`am-ET-MekdesNeural` via `edge-tts`) into `pipeline/narration.py` as the primary model in `storyboard.json`, and generated all 12 shots under `stage: "narration"` (`runs.jsonl` lines 165–176, `27.65s` total latency, `65.0s` final film runtime).
 
-**9. Gemini TTS speaks Amharic with an American English accent (prosody and phonology gap).**
-After removing the English prefix, `gemini-3.8-flash-lite-tts` and `gemini-2.5-flash-preview-tts` both read the Amharic script in Amharic, but the pronunciation and prosody sound like an American English speaker phonetically reading transliterated Amharic rather than a native Ethiopian speaker (e.g., flattened ejectives and English vowel coloration).
-Status: kept the generated clips in `outputs/narration/` as a working baseline for the pipeline and documented this model limitation for the report and multilingual evaluation. Exploring native-accented alternatives (such as `am-ET-MekdesNeural` / `am-ET-AmehaNeural` or MMS-TTS Amharic) as a ceiling comparison.
+### Entry 10: Cloudflare Workers AI `@cf/black-forest-labs/flux-1-schnell` Rejected `/seed` with HTTP 400 and Timed Out on Long Reads
+- **Evidence:** `runs.jsonl` lines 85–87 (`2026-11-25T13:50:03Z`–`13:50:13Z`).
+- **What broke:** Sending `{"prompt": prompt, "steps": 4, "seed": seed}` returned `HTTP Error 400: Bad Request: AiError: Bad input: Error: Additional or unevaluated properties '/seed' at '/' not allowed (code: 5006)`. Later, during the v2 keyframe regeneration, a slow Cloudflare response raised Python 3.13's `TimeoutError` during `json.load(response)`.
+- **Resolution:** Removed `seed` from the Cloudflare JSON body while keeping `seed` in the local SHA-256 `cache_key` (logged as `"seed_in_cache_key_only": seed`), and added `(TimeoutError, OSError)` to the retry exception tuple in `pipeline/keyframes.py`.
 
-## Keyframes and Assembly stages: problems and fixes (25 Nov 2026)
+### Entry 11: Homebrew `ffmpeg 9.1` Excludes `drawtext` and `subtitles` (`libass`)
+- **What broke:** Homebrew's standard `ffmpeg 9.1` bottle includes `zoompan`, `sidechaincompress`, and `loudnorm`, but excludes `drawtext` and `subtitles` (moved to `ffmpeg-full`). Using `drawtext` would break `make film` on a standard macOS Homebrew install.
+- **Resolution:** Used `Pillow` in `pipeline/assemble.py` to render transparent PNG subtitle overlays (splitting long subtitles `>85` chars like Shot 8 into two timed cues so vertical subtitles never exceed 3 lines) and the AI end card, compositing them with FFmpeg's built-in `overlay=0:0:enable='between(t,t0,t1)'` filter. Added both macOS and Linux TrueType font paths (`Arial`, `Helvetica`, `DejaVuSans`, `LiberationSans`).
 
-**10. Cloudflare Workers AI `@cf/black-forest-labs/flux-1-schnell` rejected the `/seed` JSON property with HTTP 400.**
-When `pipeline/keyframes.py` first called Cloudflare FLUX with `{"prompt": prompt, "steps": 4, "seed": seed}`, the endpoint returned `HTTP Error 400: Bad Request: AiError: Bad input: Error: Additional or unevaluated properties '/seed' at '/' not allowed`.
-Fixed: kept `seed` in `storyboard.json` and inside the local SHA-256 cache key (so changing a shot's seed still invalidates the cache and triggers regeneration), and sent `{"prompt": prompt, "steps": 4}` in the Cloudflare request payload. All 12 keyframes plus the reference sheet then generated in ~46 seconds total.
+### Entry 12: Text-Only Reference Sheet Conditioning Drift, Character Over-Injection, and Hallucinated Text (`GOCOD 30129`)
+- **Evidence:** `runs.jsonl` lines 88–100 (`13:51:22Z`–`13:52:06Z`, v1 keyframes archived in `outputs/keyframes-v1-archive/`) vs. lines 177–189 (`16:52:28Z`–`17:02:14Z`, v2 keyframes in `outputs/keyframes/`).
+- **What broke:** In `keyframes-v1`, I prepended the full `character` string to all 12 shots and used a vague dress description (`"a simple colourful dress"`). Because Cloudflare `flux-1-schnell` is text-to-image only (it cannot take `reference_sheet.jpg` as an image conditioning input, and rejects `/seed`), four visual defects occurred in v1:
+  1. **Characters injected into landscape/sky shots:** Shot 1 (village establishing shot) and Shot 3 (the bright star in the sky) both drew close-ups of Abigiya and her grandmother in the foreground because `character` was blindly glued onto every shot prompt.
+  2. **Triple-elder prompt bug in Shot 8:** Shot 8's prompt asked for the grandmother speaking *plus* a child helping an elderly neighbour, while the global character block also injected the grandmother—resulting in three elderly women in one frame.
+  3. **Hallucinated text on `reference_sheet.jpg`:** Despite `"no text, no watermark"`, the v1 reference sheet rendered garbled text (`GOCOD 30129`) and a corner signature—confirming Appendix B's warning about text inside generated images.
+  4. **Dress color and braid drift:** Without image conditioning or a seed parameter, `"a simple colourful dress"` drifted across shots (green/blue, orange, yellow, red vest) and braids varied between one and two.
+- **Resolution:** Added an explicit per-shot `characters` array (`[]`, `["abigiya"]`, or `["grandmother", "abigiya"]`) in `storyboard.json`, locked the clothing description to `"two neat braids wearing a warm yellow-and-teal dress"` and `"traditional white cotton netela shawl"`, simplified Shot 8 to one clear visual moment, and regenerated the keyframes (`runs.jsonl` lines 177–189). Shot 1 is now a true village establishing shot, Shot 3 is a pure night-sky star shot, `reference_sheet.jpg` has zero hallucinated text, and `reference_sheet.jpg` and `shot_08.jpg` share the exact yellow-and-teal dress and white netela shawl—though minor facial/proportion drift remains across independent text-to-image calls, which is documented as a negative result in `EXPERIMENTS.md` (Experiment 10).
 
-**11. Homebrew's default `ffmpeg 9.1` bottle excludes `drawtext` and `subtitles` (`libass`).**
-When inspecting available FFmpeg filters (`ffmpeg -filters`), `zoompan`, `sidechaincompress`, and `loudnorm` were present, but `drawtext` and `subtitles` were absent because Homebrew moved `libass` and `libfreetype` into the separate `ffmpeg-full` formula. Relying on `drawtext` would break `make film` on any machine with standard Homebrew `ffmpeg`.
-Fixed: rendered transparent subtitle overlay PNGs (wrapped inside safe areas) and the AI disclosure end card in Python with `Pillow`, and composited them with FFmpeg's built-in `overlay` filter so the pipeline runs on standard `ffmpeg`.
-
-
-
+### Entry 13: Zero Free GPU Session for Wan 2.2 Video and ACE-Step 1.5 Music Within the Sprint Window
+- **What broke:** Running Wan 2.2 TI2V-5B (12 shots × 5–10 GPU minutes per clip on a T4) and ACE-Step 1.5 requires a phone-verified Kaggle GPU session or an available Colab T4 runtime. Neither was available without interruption during our 24-hour sprint window.
+- **Resolution:** Used the brief's explicitly supported zero-GPU floor fallback (line 115: *"Nobody needs to end with nothing: if video generation fails you, animating your keyframes with a slow pan-and-zoom in FFmpeg works, and a narrated, scored, subtitled sequence of stills is still a film"*):
+  - `pipeline/shots.py` animates the 12 FLUX.1-schnell keyframes at 24 fps in both `9:16` and `16:9` using FFmpeg's `zoompan` filter (`push-in`, `pull-out`, `pan-left`, `pan-right`, `none`) scaled by `motion.amount`.
+  - `pipeline/music.py` synthesizes a deterministic 65.4-second Ethiopian Tizita major pentatonic krar-and-pad lullaby (`local-tizita-lullaby-synth-v1`).
+  - Both scripts include drop-in file override support (`outputs/wan/shot_XX.mp4` with `tpad=stop_mode=clone` and `outputs/music/ace_step_chosen.wav` with full `runs.jsonl` logging) when GPU outputs are supplied.

@@ -1,0 +1,12 @@
+{
+  "cache_key": "87ffa67bf1674930f137f3f0430c0040fdd416a18083415a80b12e4da61072cf",
+  "code_version": "shots-v2",
+  "shot_id": 3,
+  "aspect": "16:9",
+  "duration_s": 5.2,
+  "motion": {
+    "type": "push-in",
+    "amount": "slow"
+  },
+  "method": "ffmpeg-zoompan-push-in"
+}

@@ -1,0 +1,9 @@
+{
+  "cache_key": "149b64245180db286de0a7275417731a31f47962c745f74e87aa6ca212a4a2d9",
+  "code_version": "keyframes-v2",
+  "model": "@cf/black-forest-labs/flux-1-schnell",
+  "seed": 3,
+  "steps": 4,
+  "prompt": "soft hand-painted storybook illustration, warm gentle light, pastel colours, painterly texture. Scene: Wide night sky over dark Ethiopian hills where one small golden star shines much brighter than all the surrounding stars, no people in frame. Centered subject composition, balanced framing for both 9:16 vertical and 16:9 horizontal crops, pure illustration without any text, letters, numbers, or signatures.",
+  "bytes": 642317
+}

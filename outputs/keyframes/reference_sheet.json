@@ -1,0 +1,9 @@
+{
+  "cache_key": "d585d40e8709a516fbdb563e83304771e5f0b7a0f1c3249215bf4909b8a4318c",
+  "code_version": "keyframes-v2",
+  "model": "@cf/black-forest-labs/flux-1-schnell",
+  "seed": 42,
+  "steps": 4,
+  "prompt": "Character and style reference sheet: soft hand-painted storybook illustration, warm gentle light, pastel colours, painterly texture. Abigiya, a young Ethiopian girl about 8 years old with dark hair in two neat braids wearing a warm yellow-and-teal dress; and her older Ethiopian grandmother with grey hair wrapped in a traditional white cotton netela shawl. Warm Ethiopian village setting at dusk, clear consistent facial features and clothing, centered composition, pure illustration without any text, letters, numbers, or signatures.",
+  "bytes": 575032
+}
