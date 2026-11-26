@@ -8,6 +8,11 @@
   "additionalProperties": false,
   "properties": {
     "title": { "type": "string", "minLength": 1 },
+    "title_local": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Optional title in the narration language, shown on the end card under the English title."
+    },
     "aspect_ratios": {
       "type": "array",
       "minItems": 2,
@@ -105,7 +110,7 @@
           "type": "array",
           "description": "Keys from film-level characters present in this shot ([] for landscape/sky establishing shots).",
           "uniqueItems": true,
-          "items": { "enum": ["abigiya", "grandmother"] }
+          "items": { "type": "string", "minLength": 1 }
         },
         "motion": {
           "type": "object",
@@ -120,7 +125,7 @@
           "description": "Set from the narration audio after the TTS stage. Null until then.",
           "anyOf": [
             { "type": "null" },
-            { "type": "number", "minimum": 2, "maximum": 12 }
+            { "type": "number", "minimum": 2, "maximum": 20 }
           ]
         },
         "seed": { "type": "integer", "minimum": 0 },

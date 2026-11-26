@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Heritage Short Studio</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="mark">◐</span>
+      <div>
+        <h1>Heritage Short Studio</h1>
+        <p>Prompt a story. Get a film.</p>
+      </div>
+    </div>
+    <div class="top-actions">
+      <label class="sr-only" for="projectSelect">Film</label>
+      <select id="projectSelect"></select>
+      <button id="newFilmBtn" class="btn primary" type="button">New film</button>
+    </div>
+  </header>
+
+  <main class="shell">
+    <aside class="sidebar">
+      <section id="filmCard" class="card"></section>
+      <section class="shot-list-wrap">
+        <div class="section-head">
+          <h2>Shots</h2>
+          <span id="shotCount" class="muted"></span>
+        </div>
+        <ol id="shotList" class="shot-list"></ol>
+      </section>
+      <footer class="sidebar-foot">
+        <span id="serverDot" class="dot"></span>
+        <span>Local studio · free-tier models</span>
+      </footer>
+    </aside>
+
+    <section class="workspace">
+      <div id="toast" class="toast" hidden></div>
+
+      <div id="welcome" class="panel welcome">
+        <h2>Make a short film from a story</h2>
+        <p>
+          Write a few sentences, or paste a script you already have. The studio drafts an
+          8–12 shot storyboard, records Amharic narration (or English), illustrates every
+          shot, animates the keyframes, scores the film, burns in English subtitles and
+          renders both vertical and horizontal cuts.
+        </p>
+        <div class="welcome-actions">
+          <button class="btn primary" id="welcomeNewBtn" type="button">Start a new film</button>
+          <button class="btn ghost" id="welcomeShowcaseBtn" type="button">Watch the showcase</button>
+        </div>
+        <p class="hint">
+          Everything runs locally on free-tier models. A full film takes a few minutes,
+          and every shot stays editable afterwards.
+        </p>
+      </div>
+
+      <div id="createPanel" class="panel" hidden>
+        <div class="panel-head">
+          <h2>New film</h2>
+          <p>One idea is enough. The drafting stage turns it into a validated storyboard.</p>
+        </div>
+        <form id="createForm">
+          <div class="segmented" role="group" aria-label="Story input">
+            <label><input type="radio" name="mode" value="prompt" checked> From a prompt</label>
+            <label><input type="radio" name="mode" value="script"> From a script</label>
+          </div>
+
+          <label class="field">
+            <span>Title <em>optional</em></span>
+            <input id="titleInput" maxlength="80" placeholder="The Lantern Keeper">
+          </label>
+
+          <label class="field" id="promptField">
+            <span>Story prompt</span>
+            <textarea id="promptInput" rows="4" placeholder="A grandmother in Harar teaches her granddaughter that a small lamp can light a whole courtyard."></textarea>
+          </label>
+
+          <label class="field" id="scriptField" hidden>
+            <span>Your script</span>
+            <textarea id="scriptInput" rows="8" placeholder="Paste the story you want divided into shots. Keep the whole arc; the studio will fit it to 8–12 shots."></textarea>
+          </label>
+
+          <div class="row">
+            <label class="field">
+              <span>Narration</span>
+              <select id="languageInput">
+                <option value="am">Amharic (with English subtitles)</option>
+                <option value="en">English</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Visual style</span>
+              <select id="styleInput">
+                <option value="storybook">Storybook</option>
+                <option value="cinematic">Cinematic</option>
+                <option value="papercut">Paper-cut</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="form-foot">
+            <p class="hint">Drafting, narration, one illustration and two clips per shot, the score and the final mix run in sequence.</p>
+            <button class="btn primary" type="submit" id="createBtn">Create film</button>
+          </div>
+        </form>
+      </div>
+
+      <div id="projectPanel" class="panel-stack" hidden>
+        <div class="tabs" role="tablist">
+          <button class="tab active" data-tab="shot" role="tab">Shot</button>
+          <button class="tab" data-tab="film" role="tab">Film</button>
+        </div>
+        <div id="shotTab" class="tab-body"></div>
+        <div id="filmTab" class="tab-body" hidden></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

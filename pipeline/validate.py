@@ -1,18 +1,67 @@
 import json
+import os
 import sys
 from pathlib import Path
 from types import SimpleNamespace
 
 from jsonschema import Draft202012Validator
 
-ROOT = Path(__file__).resolve().parent.parent
-SCHEMA_PATH = ROOT / "schema" / "storyboard.schema.json"
-STORYBOARD_PATH = ROOT / "storyboard.json"
+REPO_ROOT = Path(__file__).resolve().parent.parent
+SCHEMA_PATH = REPO_ROOT / "schema" / "storyboard.schema.json"
 END_CARD_DURATION_S = 2.6
+
+
+def _flag_value(name):
+    argv = sys.argv[1:]
+    for index, arg in enumerate(argv):
+        if arg == name and index + 1 < len(argv):
+            return argv[index + 1]
+        if arg.startswith(name + "="):
+            return arg.split("=", 1)[1]
+    return None
+
+
+def _resolve_project_root():
+    raw = os.environ.get("PROJECT_ROOT") or _flag_value("--project")
+    if not raw:
+        return REPO_ROOT
+    path = Path(raw).expanduser()
+    if not path.is_absolute():
+        path = Path.cwd() / path
+    return path.resolve()
+
+
+ROOT = _resolve_project_root()
+STORYBOARD_PATH = ROOT / "storyboard.json"
 
 
 def load_storyboard(path=STORYBOARD_PATH):
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def selected_shots():
+    """Return the set of shot ids requested with --shots, or None for every shot."""
+    raw = _flag_value("--shots")
+    if not raw:
+        return None
+    ids = set()
+    for part in raw.split(","):
+        part = part.strip()
+        if not part:
+            continue
+        if "-" in part:
+            start, end = part.split("-", 1)
+            ids.update(range(int(start), int(end) + 1))
+        else:
+            ids.add(int(part))
+    return ids or None
+
+
+def selected_aspects():
+    raw = _flag_value("--aspect")
+    if not raw:
+        return None
+    return [part.strip() for part in raw.split(",") if part.strip()]
 
 
 def validate(board):
@@ -30,6 +79,17 @@ def validate(board):
                 message=f"Shot IDs must be sequential 1..{len(shots)}, got {actual_ids}",
             )
         )
+
+    character_map = board.get("characters", {})
+    for shot in shots:
+        unknown = [key for key in shot.get("characters", []) if key not in character_map]
+        if unknown:
+            errors.append(
+                SimpleNamespace(
+                    path=["shots", shot.get("id"), "characters"],
+                    message=f"Unknown character keys {unknown}; define them in the film-level characters map",
+                )
+            )
 
     for idx, cue in enumerate(board.get("music", [])):
         start_s = cue.get("start_shot", 1)
@@ -56,19 +116,31 @@ def validate(board):
     return errors
 
 
+def format_errors(errors):
+    return [f"{list(error.path)}: {error.message}" for error in errors]
+
+
+def runtime_errors_only(errors):
+    return all(list(error.path) == ["shots", "duration_s"] for error in errors)
+
+
+def print_errors(errors):
+    for error in errors:
+        print(f"ERROR {list(error.path)}: {error.message}")
+
+
 def main():
     board = load_storyboard()
     errors = validate(board)
     if errors:
-        for error in errors:
-            print(f"ERROR {list(error.path)}: {error.message}")
+        print_errors(errors)
         return 1
     durations = [s.get("duration_s") for s in board["shots"]]
     if all(isinstance(d, (int, float)) for d in durations):
         total_s = round(sum(durations) + END_CARD_DURATION_S, 1)
-        print(f"storyboard.json is valid: {len(board['shots'])} shots, {total_s}s total runtime")
+        print(f"{STORYBOARD_PATH} is valid: {len(board['shots'])} shots, {total_s}s total runtime")
     else:
-        print(f"storyboard.json is valid: {len(board['shots'])} shots (durations pending TTS)")
+        print(f"{STORYBOARD_PATH} is valid: {len(board['shots'])} shots (durations pending TTS)")
     return 0
 
 
