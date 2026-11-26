@@ -100,9 +100,10 @@ narration legitimately rewrites `storyboard.json` after the WAVs exist.
 
 0. **`pipeline/script.py` — Drafting a Validated Storyboard**
    - Reads `project.json` inputs (prompt or pasted script, language, style) and
-     asks `gemini-3.8-flash` (falling back to `gemini-3.5-flash` and
-     `gemini-3.7-flash` when a model returns 503) for one JSON object, then
-     validates it with the same `validate()` every other stage trusts.
+     asks `gemini-3.8-flash` (falling back to `gemini-3.5-flash`,
+     `gemini-3.7-flash`, then `gemini-3.5-flash-lite` when a model returns 503)
+     for one JSON object, then validates it with the same `validate()` every
+     other stage trusts.
    - On failure it makes exactly one repair call with the schema errors and the
      previous answer, then writes `draft_error.txt` instead of a bad storyboard.
    - `normalise()` forces the fields the studio owns rather than trusting the

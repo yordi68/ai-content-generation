@@ -28,7 +28,7 @@ from validate import REPO_ROOT, ROOT, STORYBOARD_PATH, _flag_value, format_error
 MODEL = "gemini-3.8-flash"
 # Free-tier availability moves: 3.8 can return 503 while 3.5 is healthy. The
 # chain is tried in order; a model that is down costs one request, not a film.
-MODEL_CHAIN = ["gemini-3.8-flash", "gemini-3.5-flash", "gemini-3.7-flash"]
+MODEL_CHAIN = ["gemini-3.8-flash", "gemini-3.5-flash", "gemini-3.7-flash", "gemini-3.5-flash-lite"]
 TIMEOUT_S = 240
 DAILY_LIMIT = 20
 CODE_VERSION = "script-v1"
