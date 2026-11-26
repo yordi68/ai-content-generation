@@ -44,7 +44,74 @@ Because our team did not have a phone-verified Kaggle GPU session or Colab GPU q
 
 ---
 
+## Studio Layer, Project Roots, and Drafting
+
+The pipeline has two front doors with one engine behind them:
+
+- `make film` validates and renders the repository root: the graded Abigiya film.
+- `make web` starts `pipeline/web.py`, a FastAPI app that drafts new films and
+  runs the same stages against `projects/<slug>/` workspaces.
+
+`pipeline/studio.py` owns everything the web app needs that is not a stage:
+slug generation, `project.json` metadata, workspace creation and deletion,
+artifact summaries (exists / mtime / bytes / missing / out of date), stage
+planning for a shot edit, and the read-only guard on the `showcase` workspace.
+`pipeline/web.py` owns HTTP, the single-worker job queue, SSE progress, and
+media serving. It never imports a stage module; it spawns
+`python pipeline/<stage>.py` with `PROJECT_ROOT` and `PROJECT_SLUG` in the
+environment, because every stage resolves its root at import time.
+
+`pipeline/validate.py` exposes both `REPO_ROOT` (credentials, `runs.jsonl`,
+showcase) and `ROOT` (the active project). `_resolve_project_root()` prefers
+`PROJECT_ROOT`, then `--project`, then the repository root. `--shots` filters
+narration, keyframes, and moving shots to the edited shot; `--aspect` filters
+moving shots to one aspect. This is what makes a per-shot save cheap.
+
+Field-level dirty tracking lives in `studio.plan_stages()`:
+
+| Changed field | Stages re-run |
+|---|---|
+| `narration` | `narration`, `shots`, `music` |
+| `picture`, `characters`, `seed` | `keyframes`, `shots` |
+| `motion` | `shots` |
+| `subtitle` | nothing (the cuts are flagged stale) |
+| `reason` | nothing |
+
+No save assembles. Every save except a reason-only edit sets `film_stale`, and
+the **Assemble full film** action is the only thing that rebuilds the three
+cuts. Assembly refuses to run while a shot is missing media or still waiting for
+its own regeneration, so a cut can never quietly use stale media.
+
+The queue is deliberately one worker: free-tier quotas and FFmpeg are shared, and
+serial execution keeps `runs.jsonl` and cache sidecars easy to reason about.
+Progress reaches the browser as Server-Sent Events; the UI also polls the project
+summary so a reload or a second tab converges on the same state.
+
+A media edit writes the shot and records it in `project.json`'s `dirty_shots`.
+A successful per-shot job clears exactly the shots it rebuilt; `film_stale`
+stays set until an assemble (or full generation) succeeds. The sidebar's "out of
+date" chip therefore means "this shot's media is saved but not rendered", and
+the film badge means "the cuts need assembly". That distinction matters because
+narration legitimately rewrites `storyboard.json` after the WAVs exist.
+
+---
+
 ## Stage Boundaries and Contracts
+
+0. **`pipeline/script.py` — Drafting a Validated Storyboard**
+   - Reads `project.json` inputs (prompt or pasted script, language, style) and
+     asks `gemini-3.8-flash` (falling back to `gemini-3.5-flash`,
+     `gemini-3.7-flash`, then `gemini-3.5-flash-lite` when a model returns 503)
+     for one JSON object, then validates it with the same `validate()` every
+     other stage trusts.
+   - On failure it makes exactly one repair call with the schema errors and the
+     previous answer, then writes `draft_error.txt` instead of a bad storyboard.
+   - `normalise()` forces the fields the studio owns rather than trusting the
+     model: both aspect ratios, the chosen style block, the language's voice
+     preset, `duration_s: null` (timing belongs to narration), sequential shot
+     IDs, unique seeds, known character keys, and one normalised music cue.
+   - Refuses to run at the repository root so the showcase storyboard cannot be
+     overwritten.
 
 1. **`pipeline/validate.py` — Contract and Invariant Gate**
    - Validates `storyboard.json` against `schema/storyboard.schema.json` (JSON Schema Draft 2020-12) before every stage run.

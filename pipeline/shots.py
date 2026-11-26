@@ -5,7 +5,7 @@ import sys
 import time
 
 from runlog import log_run
-from validate import ROOT, load_storyboard, validate
+from validate import ROOT, load_storyboard, selected_aspects, selected_shots, validate
 
 KEYFRAMES_DIR = ROOT / "outputs" / "keyframes"
 WAN_DIR = ROOT / "outputs" / "wan"
@@ -173,11 +173,15 @@ def main():
         return 1
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
-    for aspect in board["aspect_ratios"]:
+    only = selected_shots()
+    aspects = selected_aspects() or board["aspect_ratios"]
+    for aspect in aspects:
         for shot in board["shots"]:
+            if only is not None and shot["id"] not in only:
+                continue
             render_shot(shot, aspect)
 
-    print("shots: all moving shots rendered for", ", ".join(board["aspect_ratios"]))
+    print("shots: moving shots rendered for", ", ".join(aspects))
     return 0
 
 

@@ -31,3 +31,6 @@ venv/
 
 # Local voice models
 models/
+
+# User-generated film workspaces: each holds its own storyboard and media
+projects/

@@ -1,6 +1,6 @@
 PYTHON := .venv/bin/python
 
-.PHONY: film setup validate narration keyframes shots music assemble
+.PHONY: film setup validate script narration keyframes shots music assemble web test
 
 film: setup validate narration keyframes shots music assemble
 
@@ -12,6 +12,9 @@ setup:
 
 validate: setup
 	$(PYTHON) pipeline/validate.py
+
+script: setup
+	$(PYTHON) pipeline/script.py
 
 narration: setup
 	$(PYTHON) pipeline/narration.py
@@ -27,3 +30,9 @@ music: setup
 
 assemble: setup
 	$(PYTHON) pipeline/assemble.py
+
+web: setup
+	cd pipeline && ../$(PYTHON) -m uvicorn web:app --host 127.0.0.1 --port 8000
+
+test: setup
+	$(PYTHON) -m unittest discover -s tests -v

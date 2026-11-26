@@ -15,9 +15,9 @@ from pathlib import Path
 import edge_tts
 
 from runlog import log_run, requests_today
-from validate import ROOT, STORYBOARD_PATH, load_storyboard, validate
+from validate import REPO_ROOT, ROOT, STORYBOARD_PATH, load_storyboard, selected_shots, validate
 
-ENV_PATH = ROOT / ".env"
+ENV_PATH = REPO_ROOT / ".env"
 OUT_DIR = ROOT / "outputs" / "narration"
 TAIL_PAUSE_S = 0.5
 MAX_ATTEMPTS = 3
@@ -233,19 +233,26 @@ def main():
     voice = board["voice"]
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     state = {"upgrade": True, "primary_only": "--primary-only" in sys.argv}
+    only = selected_shots()
 
     for shot in board["shots"]:
+        if only is not None and shot["id"] not in only:
+            continue
         seconds = generate(shot, voice, api_key, state)
         shot["duration_s"] = round(seconds / voice["tempo"] + TAIL_PAUSE_S, 1)
 
+    STORYBOARD_PATH.write_text(json.dumps(board, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+
     errors = validate(board)
     if errors:
-        for error in errors:
-            print(f"ERROR {list(error.path)}: {error.message}")
-        return 1
+        from validate import print_errors, runtime_errors_only
 
-    STORYBOARD_PATH.write_text(json.dumps(board, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    total = sum(shot["duration_s"] for shot in board["shots"])
+        print_errors(errors)
+        if not runtime_errors_only(errors):
+            return 1
+        print("WARNING: runtime is outside 60-90s; edit a shot's narration before assembling")
+
+    total = sum(shot["duration_s"] or 0 for shot in board["shots"])
     print(f"storyboard.json updated: total {total:.1f}s across {len(board['shots'])} shots")
     return 0
 

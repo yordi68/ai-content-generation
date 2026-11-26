@@ -18,11 +18,47 @@ make film
 
 ### Prerequisites
 
-- **Python 3.10+** (`make film` automatically creates `.venv` and installs `requirements.txt`: `jsonschema==4.26.0`, `pillow==13.0.0`, `edge-tts==7.3.1`)
+- **Python 3.10+** (`make film` automatically creates `.venv` and installs `requirements.txt`: `jsonschema==4.26.0`, `pillow==13.0.0`, `edge-tts==7.3.1`, `fastapi==0.115.6`, `uvicorn==0.34.0`)
 - **FFmpeg + TrueType Font** (`brew install ffmpeg` on macOS, or `sudo apt install ffmpeg fonts-dejavu-core` on Linux)
 - **Free API keys in `.env`:**
   - `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_API_TOKEN` — from [Cloudflare Workers AI](https://dash.cloudflare.com/) (Free daily allowance, used by `pipeline/keyframes.py` when the keyframe cache misses)
   - `GEMINI_API_KEY` — from [Google AI Studio](https://aistudio.google.com/) (Free Tier, used by `pipeline/narration.py` when failing over from `am-ET-MekdesNeural` to the 3-model Gemini TTS failover chain)
+
+---
+
+## Studio: Make Your Own Film in the Browser
+
+`make film` reproduces the graded Abigiya film. `make web` starts a local studio
+where anyone can write a story prompt (or paste a script) and get their own
+validated storyboard, narration, illustrations, moving shots, score, and three
+finished cuts:
+
+```bash
+make web
+# open http://127.0.0.1:8000
+```
+
+- **One-click generation.** Creating a film queues `script → narration →
+  keyframes → shots → music → assemble` on a single background worker and streams
+  progress to the page over SSE.
+- **Per-shot editing.** The sidebar lists every shot with its keyframe and
+  duration. The inspector previews the moving shot (9:16 and 16:9), the
+  illustration, and the narration, and lets you edit narration, subtitle, picture
+  prompt, active characters, camera motion, seed, and the shot's reason. Saving
+  re-runs only the stages its changed fields require and flags the cuts for
+  assembly. The three finished cuts are rebuilt when you press **Assemble full
+  film**; per-shot saves never re-render them on their own.
+- **Isolated workspaces.** Each film lives in `projects/<slug>/` with its own
+  `storyboard.json` and `outputs/`. The graded Abigiya film is the read-only
+  `showcase` workspace, so studio use can never overwrite it.
+- **Local only.** The server binds `127.0.0.1`, reads keys from the repository
+  `.env`, and keeps one global `runs.jsonl` tagged with a `project` field so
+  free-tier quota is counted per key rather than per film.
+
+The studio is a thin HTTP layer over the same stage scripts `make film` runs; see
+[`ARCHITECTURE.md`](ARCHITECTURE.md) and the decisions in
+[`docs/adr/`](docs/adr/). Workspace creation, stage planning, shot edits, and
+script normalising are covered by `make test`.
 
 ---
 
@@ -56,20 +92,28 @@ Every stage caches its output by a SHA-256 hash of that shot's inputs (plus the 
 ```
 .
 ├── README.md                        # One-command run instructions, overview, and cost summary
-├── Makefile                         # Single-command orchestration (`make film`)
-├── requirements.txt                 # Pinned Python dependencies (jsonschema, pillow, edge-tts)
+├── Makefile                         # Single-command orchestration (`make film`, `make web`)
+├── requirements.txt                 # Pinned Python dependencies (jsonschema, pillow, edge-tts, fastapi, uvicorn)
 ├── .env.example                     # Environment variable template (no secrets committed)
 ├── storyboard.json                  # The contract between all stages (12 shots, prompts, cues)
+├── CONTEXT.md                       # Canonical studio vocabulary (prompt, script, storyboard, shot, cut)
 ├── schema/
 │   └── storyboard.schema.json       # JSON Schema validated before every stage run
 ├── pipeline/
-│   ├── validate.py                  # Validates storyboard.json schema, IDs, cue bounds & 60-90s runtime
+│   ├── validate.py                  # Resolves the active project root, then validates schema and invariants
+│   ├── script.py                    # Drafts a validated storyboard from a prompt or script (Gemini)
 │   ├── runlog.py                    # Appends every model call to runs.jsonl + tracks daily quota
 │   ├── narration.py                 # Edge Neural TTS + 3-model Gemini TTS failover & 20s RPM pacing
-│   ├── keyframes.py                 # Reference sheet + 12 FLUX.1-schnell keyframes (selective characters)
+│   ├── keyframes.py                 # Reference sheet + FLUX.1-schnell keyframes (selective characters)
 │   ├── shots.py                     # Moving shots in 9:16 and 16:9 via FFmpeg zoompan
 │   ├── music.py                     # Tizita pentatonic lullaby score synthesizer
-│   └── assemble.py                  # Sidechain ducking, 2-pass -14 LUFS loudnorm, 2-cue subtitles & end card
+│   ├── assemble.py                  # Sidechain ducking, 2-pass -14 LUFS loudnorm, subtitles & end card
+│   ├── studio.py                    # Project workspaces, summaries, stage planning, shot edits
+│   └── web.py                       # FastAPI app, SSE progress, single-worker job queue
+├── web/                             # Vanilla HTML/CSS/JS studio UI (no build step)
+├── projects/                        # Git-ignored per-film workspaces (`projects/<slug>/`)
+├── tests/                           # unittest coverage for workspaces, stage planning, script normalising
+├── docs/adr/                        # Architecture decision records (workspaces, global run log)
 ├── runs.jsonl                       # Complete structured log of all 215 model/stage calls, latencies & costs
 ├── outputs/                         # Committed *.json SHA-256 cache sidecars (+ git-ignored media binaries)
 ├── DESIGN.md                        # Audience, intent, per-shot reasons, and user test records

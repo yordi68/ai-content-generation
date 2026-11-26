@@ -65,11 +65,20 @@ def render_subtitle_overlay(text, width, height, out_path):
     draw = ImageDraw.Draw(img)
 
     is_vertical = height > width
-    font_size = 28 if is_vertical else 28
-    max_chars = 36 if is_vertical else 54
-    font = load_font(font_size)
+    base_chars = 36 if is_vertical else 54
+    chosen = None
+    for size in (28, 25, 22, 20):
+        font = load_font(size)
+        max_chars = max(18, int(base_chars * 28 / size))
+        lines = textwrap.wrap(text, width=max_chars)
+        if len(lines) <= 3:
+            chosen = (font, lines)
+            break
+    if chosen is None:
+        font = load_font(20)
+        chosen = (font, textwrap.wrap(text, width=max(18, int(base_chars * 28 / 20)))[:3])
+    font, lines = chosen
 
-    lines = textwrap.wrap(text, width=max_chars)[:3]
     line_gap = 8
     bboxes = [draw.textbbox((0, 0), line, font=font) for line in lines]
     line_heights = [b[3] - b[1] for b in bboxes]
@@ -102,27 +111,43 @@ def render_end_card_image(board, width, height, out_path):
     img = Image.new("RGB", (width, height), (20, 22, 34))
     draw = ImageDraw.Draw(img)
 
-    title_font = load_font(36 if width >= height else 32)
-    sub_font = load_font(25 if width >= height else 23)
-    small_font = load_font(19 if width >= height else 17)
+    is_vertical = height > width
+    title_font = load_font(34 if is_vertical else 40)
+    sub_font = load_font(23 if is_vertical else 26)
+    small_font = load_font(17 if is_vertical else 19)
 
     active_voice = board["voice"]["models"][0]
-    lines = [
-        (board["title"], title_font, (255, 236, 179)),
-        ("ኮኮቤ • Kokobe", sub_font, (240, 240, 245)),
-        ("Made with AI", sub_font, (255, 210, 120)),
-        (f"Narrated with {active_voice} (Edge TTS) & Gemini TTS", small_font, (190, 195, 210)),
-        ("Illustrated with FLUX.1-schnell • Assembled with FFmpeg", small_font, (190, 195, 210)),
-    ]
+    provider_label = {"edge-tts": "Edge TTS", "gemini": "Gemini TTS"}.get(
+        board["voice"].get("provider"), "TTS"
+    )
 
-    total_h = len(lines) * 52
-    curr_y = (height - total_h) // 2
-    for text, font, color in lines:
-        bbox = draw.textbbox((0, 0), text, font=font)
-        tw = bbox[2] - bbox[0]
-        th = bbox[3] - bbox[1]
-        draw.text(((width - tw) // 2, curr_y), text, font=font, fill=color)
-        curr_y += th + 24
+    entries = [(board["title"], title_font, (255, 236, 179), 18)]
+    if board.get("title_local"):
+        entries.append((board["title_local"], sub_font, (240, 240, 245), 14))
+    entries.extend(
+        [
+            ("Made with AI", sub_font, (255, 210, 120), 18),
+            (f"Narrated with {active_voice} ({provider_label})", small_font, (190, 195, 210), 8),
+            ("Illustrated with FLUX.1-schnell • Assembled with FFmpeg", small_font, (190, 195, 210), 8),
+        ]
+    )
+
+    rendered = []
+    for text, font, color, gap in entries:
+        font_size = getattr(font, "size", 20)
+        max_chars = max(18, int(width / (font_size * 0.56)))
+        for part in textwrap.wrap(text, width=max_chars) or [text]:
+            rendered.append((part, font, color, gap))
+
+    bboxes = [draw.textbbox((0, 0), text, font=font) for text, font, _, _ in rendered]
+    heights = [b[3] - b[1] for b in bboxes]
+    total_h = sum(heights) + sum(gap for *_, gap in rendered) - rendered[-1][3]
+    curr_y = max(24, (height - total_h) // 2)
+
+    for (text, font, color, gap), bbox, line_h in zip(rendered, bboxes, heights):
+        text_w = bbox[2] - bbox[0]
+        draw.text(((width - text_w) // 2, curr_y - bbox[1]), text, font=font, fill=color)
+        curr_y += line_h + gap
 
     img.save(out_path, "PNG")
 

@@ -7,9 +7,9 @@ import urllib.error
 import urllib.request
 
 from runlog import log_run
-from validate import ROOT, load_storyboard, validate
+from validate import REPO_ROOT, ROOT, load_storyboard, selected_shots, validate
 
-ENV_PATH = ROOT / ".env"
+ENV_PATH = REPO_ROOT / ".env"
 OUT_DIR = ROOT / "outputs" / "keyframes"
 MODEL = "@cf/black-forest-labs/flux-1-schnell"
 STEPS = 4
@@ -172,15 +172,22 @@ def main():
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     creds_cache = []
+    only = selected_shots()
 
-    ref_prompt = compose_reference_prompt(board)
-    generate_image("reference_sheet", 0, ref_prompt, 42, creds_cache)
+    if only is None:
+        ref_prompt = compose_reference_prompt(board)
+        generate_image("reference_sheet", 0, ref_prompt, 42, creds_cache)
 
     for shot in board["shots"]:
+        if only is not None and shot["id"] not in only:
+            continue
         prompt = compose_shot_prompt(board, shot)
         generate_image(f"shot_{shot['id']:02d}", shot["id"], prompt, shot["seed"], creds_cache)
 
-    print(f"keyframes: all {len(board['shots'])} shots + reference_sheet ready")
+    if only is None:
+        print(f"keyframes: all {len(board['shots'])} shots + reference_sheet ready")
+    else:
+        print(f"keyframes: shots {', '.join(str(shot_id) for shot_id in sorted(only))} ready")
     return 0
 
 
